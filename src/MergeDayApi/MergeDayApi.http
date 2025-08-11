@@ -1,0 +1,6 @@
+@MergeDayApi_HostAddress = http://localhost:5019
+
+GET {{MergeDayApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
