@@ -16,14 +16,4 @@ public static class NamespaceRegexHelpers
         var escaped = Regex.Escape(@namespace);
         return $"^{escaped}(\\.|$)";
     }
-
-    /// <summary>
-    /// Given a type, build the same regex using its Namespace.
-    /// E.g. if T lives in "KCT.BE.Features.Events", returns "^KCT\.BE\.Features\.Events(\.|$)".
-    /// </summary>
-    public static string ExactOrChildNamespace(this Type type)
-    {
-        var ns = type.Namespace ?? string.Empty;
-        return ExactOrChildNamespace(ns);
-    }
 }
