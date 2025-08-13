@@ -1,4 +1,5 @@
 ﻿using MergeDayApi.Domain;
+using MergeDayApi.Domain.Entities;
 using MergeDayApi.Endpoints;
 using MergeDayApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;

@@ -1,4 +1,4 @@
-﻿namespace MergeDayApi.Domain;
+﻿namespace MergeDayApi.Domain.Entities;
 
 public class Absence
 {
