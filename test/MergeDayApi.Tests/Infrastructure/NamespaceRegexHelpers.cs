@@ -5,7 +5,7 @@ namespace MergeDayApi.Tests.Infrastructure;
 public static class NamespaceRegexHelpers
 {
     /// <summary>
-    /// Given a CLR namespace (e.g. "BE.Features.Events"), 
+    /// Given a CLR namespace (e.g. "MergeDayApi.Features.Absences"), 
     /// returns a regex that matches exactly that namespace or any child namespace.
     /// </summary>
     public static string ExactOrChildNamespace(string @namespace)
