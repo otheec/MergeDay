@@ -15,7 +15,7 @@ public static class GetAllWorkspacesEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapStandardGet<GetAllWorkspacesResponse[]>("", Handler)
+            app.MapStandardGet<ICollection<GetAllWorkspacesResponse>>("", Handler)
                 .WithName("Get all workspaces")
                 .WithSummary("Retrieve all workspaces.")
                 .AllowAnonymous();
