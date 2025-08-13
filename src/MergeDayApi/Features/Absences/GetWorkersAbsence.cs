@@ -26,12 +26,16 @@ public static class GetWorkersAbsence
     public static async Task<IResult> Handler(
         [FromRoute] string userId,
         [FromServices] MergeDayDbContext dbContext,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        [FromQuery] DateTime? StartDate = null,
+        [FromQuery] DateTime? EndDate = null)
     {
         var logger = loggerFactory.CreateLogger(nameof(GetWorkersAbsence));
 
         var absences = await dbContext.Absences
             .Where(a => a.UserId == userId)
+            .Where(a => !StartDate.HasValue || a.EndDate >= StartDate.Value)
+            .Where(a => !EndDate.HasValue || a.StartDate <= EndDate.Value)
             .ToListAsync();
 
         if (absences == null || absences.Count == 0)
