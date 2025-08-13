@@ -4,12 +4,13 @@ using MergeDayApi.Endpoints;
 using MergeDayApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MergeDayApi.Features;
+namespace MergeDayApi.Features.Absences;
 
 public static class RequestAbsenceEndpoint
 {
     public record RequestAbsenceRequest(DateTime StartDate, DateTime EndDate, AbsenceKind AbsenceKind);
 
+    [EndpointGroup("Absences")]
     public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)

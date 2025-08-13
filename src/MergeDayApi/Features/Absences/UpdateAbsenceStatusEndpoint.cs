@@ -3,17 +3,19 @@ using MergeDayApi.Endpoints;
 using MergeDayApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MergeDayApi.Features;
+namespace MergeDayApi.Features.Absences;
 
 public static class UpdateAbsenceStatusEndpoint
 {
     public record UpdateAbsenceStatusRequest(UpdateStatus UpdateStatus, string? Note);
+
     public enum UpdateStatus
     {
         Approved,
         Rejected
     }
 
+    [EndpointGroup("Absences")]
     public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)

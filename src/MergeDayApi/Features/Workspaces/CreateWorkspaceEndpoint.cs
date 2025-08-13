@@ -3,12 +3,13 @@ using MergeDayApi.Endpoints;
 using MergeDayApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MergeDayApi.Features;
+namespace MergeDayApi.Features.Workspaces;
 
 public static class CreateWorkspaceEndpoint
 {
     public record CreateWorkspaceRequest(ICollection<string> UserIds);
 
+    [EndpointGroup("Workspaces")]
     public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
