@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MergeDayApi.Features.Workspaces;
 
-public static class GetAllWorkspaces
+public static class GetAllWorkspacesEndpoint
 {
     public record GetAllWorkspacesResponse(ICollection<WorkspaceDto> Workspaces);
     public record WorkspaceDto(long Id, string Name, ICollection<string> UserIds);
@@ -27,7 +27,7 @@ public static class GetAllWorkspaces
         ILoggerFactory loggerFactory,
         CancellationToken ct)
     {
-        var logger = loggerFactory.CreateLogger(nameof(GetAllWorkspaces));
+        var logger = loggerFactory.CreateLogger(nameof(GetAllWorkspacesEndpoint));
 
         var response = await dbContext.Workspaces
             .Select(ws => new WorkspaceDto(ws.Id, ws.Name, ws.UserIds))
