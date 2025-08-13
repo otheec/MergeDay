@@ -24,13 +24,14 @@ public static class GetAllWorkspaces
 
     public static async Task<IResult> Handler(
         [FromServices] MergeDayDbContext dbContext,
-        ILoggerFactory loggerFactory)
+        ILoggerFactory loggerFactory,
+        CancellationToken ct)
     {
         var logger = loggerFactory.CreateLogger(nameof(GetAllWorkspaces));
 
         var response = await dbContext.Workspaces
             .Select(ws => new WorkspaceDto(ws.Id, ws.Name, ws.UserIds))
-            .ToArrayAsync();
+            .ToArrayAsync(ct);
 
         logger.LogInformation("Retrieved {Count} workspaces", response.Length);
 
