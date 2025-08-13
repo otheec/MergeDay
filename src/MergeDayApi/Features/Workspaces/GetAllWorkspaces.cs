@@ -10,6 +10,7 @@ public static class GetAllWorkspaces
     public record GetAllWorkspacesResponse(ICollection<WorkspaceDto> Workspaces);
     public record WorkspaceDto(long Id, string Name, ICollection<string> UserIds);
 
+    [EndpointGroup("Workspaces")]
     public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
