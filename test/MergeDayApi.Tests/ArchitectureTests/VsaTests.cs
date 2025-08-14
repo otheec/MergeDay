@@ -1,5 +1,5 @@
-﻿using NetArchTest.Rules;
-using System.Reflection;
+﻿using System.Reflection;
+using NetArchTest.Rules;
 
 namespace MergeDayApi.Tests.ArchitectureTests;
 

@@ -1,8 +1,8 @@
 ﻿namespace MergeDayApi.Tests.ArchitectureTests;
 
+using System.Reflection;
 using MergeDayApi.Tests.Infrastructure;
 using NetArchTest.Rules;
-using System.Reflection;
 
 [Trait("Category", TestCategories.Architecture)]
 public class LayeringTests

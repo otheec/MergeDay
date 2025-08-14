@@ -12,7 +12,7 @@ public static class UserPrincipalExtensions
 
     public static string? GetUserId(this ClaimsPrincipal user)
     {
-        return user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value 
+        return user.FindFirst("http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value
             ?? throw new UnauthorizedAccessException();
     }
 }

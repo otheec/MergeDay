@@ -55,4 +55,3 @@ public static class UpdateAbsenceStatusEndpoint
         return Results.Ok(entity);
     }
 }
-
