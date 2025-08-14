@@ -1,44 +1,66 @@
-import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router";
+import SignIn from "./pages/AuthPages/SignIn";
+import SignUp from "./pages/AuthPages/SignUp";
+import NotFound from "./pages/OtherPage/NotFound";
+import UserProfiles from "./pages/UserProfiles";
+import Videos from "./pages/UiElements/Videos";
+import Images from "./pages/UiElements/Images";
+import Alerts from "./pages/UiElements/Alerts";
+import Badges from "./pages/UiElements/Badges";
+import Avatars from "./pages/UiElements/Avatars";
+import Buttons from "./pages/UiElements/Buttons";
+import LineChart from "./pages/Charts/LineChart";
+import BarChart from "./pages/Charts/BarChart";
+import Calendar from "./pages/Calendar";
+import BasicTables from "./pages/Tables/BasicTables";
+import FormElements from "./pages/Forms/FormElements";
+import Blank from "./pages/Blank";
+import AppLayout from "./layout/AppLayout";
+import { ScrollToTop } from "./components/common/ScrollToTop";
+import Home from "./pages/Dashboard/Home";
 
-const App: React.FC = () => {
+export default function App() {
   return (
-    <div className="min-h-dvh flex flex-col bg-neutral-50 text-neutral-900">
-      {/* HEADER */}
-      <header className="h-14 border-b bg-white">
-        <div className="mx-auto max-w-screen-xl h-full flex items-center justify-between px-4">
-          <a className="font-semibold">MySite</a>
-          <nav className="hidden md:flex gap-6">
-            <a className="hover:text-blue-600">Home</a>
-            <a className="hover:text-blue-600">About</a>
-            <a className="hover:text-blue-600">Contact</a>
-          </nav>
-          <button
-            className="md:hidden border rounded px-3 py-1"
-            aria-label="Open menu"
-          >
-            ☰
-          </button>
-        </div>
-      </header>
+    <>
+      <Router>
+        <ScrollToTop />
+        <Routes>
+          {/* Dashboard Layout */}
+          <Route element={<AppLayout />}>
+            <Route index path="/" element={<Home />} />
 
-      {/* MAIN */}
-      <main className="flex-1">
-        <div className="mx-auto max-w-screen-xl px-4 py-8">
-          <h1 className="text-3xl font-bold mb-4">Welcome!</h1>
-          <p className="text-neutral-700">
-            This is your basic layout — a header, a main content area, and a footer.
-          </p>
-        </div>
-      </main>
+            {/* Others Page */}
+            <Route path="/profile" element={<UserProfiles />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/blank" element={<Blank />} />
 
-      {/* FOOTER */}
-      <footer className="h-16 border-t bg-white">
-        <div className="mx-auto max-w-screen-xl h-full flex items-center justify-center px-4 text-sm text-neutral-500">
-          © {new Date().getFullYear()} MySite
-        </div>
-      </footer>
-    </div>
+            {/* Forms */}
+            <Route path="/form-elements" element={<FormElements />} />
+
+            {/* Tables */}
+            <Route path="/basic-tables" element={<BasicTables />} />
+
+            {/* Ui Elements */}
+            <Route path="/alerts" element={<Alerts />} />
+            <Route path="/avatars" element={<Avatars />} />
+            <Route path="/badge" element={<Badges />} />
+            <Route path="/buttons" element={<Buttons />} />
+            <Route path="/images" element={<Images />} />
+            <Route path="/videos" element={<Videos />} />
+
+            {/* Charts */}
+            <Route path="/line-chart" element={<LineChart />} />
+            <Route path="/bar-chart" element={<BarChart />} />
+          </Route>
+
+          {/* Auth Layout */}
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+
+          {/* Fallback Route */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </Router>
+    </>
   );
-};
-
-export default App;
+}
