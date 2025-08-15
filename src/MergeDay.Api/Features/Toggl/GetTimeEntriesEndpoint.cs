@@ -1,11 +1,10 @@
 ﻿using MergeDay.Api.Endpoints;
-using MergeDay.Api.Infrastructure.TogglConnector;
 
 namespace MergeDay.Api.Features.Toggl;
 
 public class GetTimeEntriesEndpoint
 {
-    public record GetTimeEntriesResponse(string? ProjectName, string? TaskName, string? Description, DateTime Start, DateTime End);
+    public record GetTimeEntriesResponse(long? ProjectId, long? TaskId, string? Description, DateTime Start, DateTime End);
 
     [EndpointGroup("Toggl")]
     public sealed class Endpoint : IEndpoint
@@ -37,8 +36,8 @@ public class GetTimeEntriesEndpoint
         }
 
         var mapped = timeEntries.Select(te => new GetTimeEntriesResponse(
-            te.ProjectName,
-            te.TaskName,
+            te.ProjectId,
+            te.TaskId,
             te.Description,
             te.Start,
             te.Stop ?? te.Start
