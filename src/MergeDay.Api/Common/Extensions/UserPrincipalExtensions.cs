@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace MergeDayApi.Common.Extensions;
+namespace MergeDay.Api.Common.Extensions;
 
 public static class UserPrincipalExtensions
 {

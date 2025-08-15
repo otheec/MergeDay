@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace MergeDayApi.Endpoints;
+namespace MergeDay.Api.Endpoints;
 
 public static class StandardEndpointExtensions
 {

@@ -1,4 +1,4 @@
-﻿namespace MergeDayApi.Domain;
+﻿namespace MergeDay.Api.Domain;
 
 public enum AbsenceStatus
 {

@@ -1,9 +1,9 @@
-﻿using MergeDayApi.Endpoints;
-using MergeDayApi.Infrastructure.Persistence;
+﻿using MergeDay.Api.Endpoints;
+using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
-namespace MergeDayApi.Features.Workspaces;
+namespace MergeDay.Api.Features.Workspaces;
 
 public static class GetAllWorkspacesEndpoint
 {

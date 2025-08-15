@@ -1,5 +1,5 @@
-using MergeDayApi.Endpoints;
-using MergeDayApi.Infrastructure.Persistence;
+using MergeDay.Api.Endpoints;
+using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

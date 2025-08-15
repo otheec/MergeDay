@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace MergeDayApi.Endpoints;
+namespace MergeDay.Api.Endpoints;
 
 public static class EndpointRegistrationExtensions
 {

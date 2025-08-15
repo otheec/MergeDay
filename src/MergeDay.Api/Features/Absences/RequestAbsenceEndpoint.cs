@@ -1,10 +1,10 @@
-﻿using MergeDayApi.Domain;
+﻿using MergeDay.Api.Domain;
+using MergeDay.Api.Endpoints;
+using MergeDay.Api.Infrastructure.Persistence;
 using MergeDayApi.Domain.Entities;
-using MergeDayApi.Endpoints;
-using MergeDayApi.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MergeDayApi.Features.Absences;
+namespace MergeDay.Api.Features.Absences;
 
 public static class RequestAbsenceEndpoint
 {

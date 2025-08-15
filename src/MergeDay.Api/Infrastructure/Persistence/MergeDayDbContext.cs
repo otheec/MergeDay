@@ -1,7 +1,7 @@
-﻿using MergeDayApi.Domain.Entities;
+﻿using MergeDay.Api.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-namespace MergeDayApi.Infrastructure.Persistence;
+namespace MergeDay.Api.Infrastructure.Persistence;
 
 public class MergeDayDbContext(DbContextOptions<MergeDayDbContext> options) : DbContext(options)
 {

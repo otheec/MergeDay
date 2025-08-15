@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using MergeDay.Api.Endpoints;
 using NetArchTest.Rules;
 
 namespace MergeDayApi.Tests.ArchitectureTests;
@@ -6,7 +7,7 @@ namespace MergeDayApi.Tests.ArchitectureTests;
 [Trait("Category", TestCategories.Architecture)]
 public class VsaTests
 {
-    private readonly Assembly _assembly = typeof(Endpoints.IEndpoint).Assembly;
+    private readonly Assembly _assembly = typeof(IEndpoint).Assembly;
 
     [Fact]
     public void Features_ShouldBeIndependent()

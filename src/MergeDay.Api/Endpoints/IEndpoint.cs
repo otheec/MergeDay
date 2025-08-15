@@ -1,4 +1,4 @@
-﻿namespace MergeDayApi.Endpoints;
+﻿namespace MergeDay.Api.Endpoints;
 
 public interface IEndpoint
 {
