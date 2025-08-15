@@ -1,6 +1,6 @@
-﻿using MergeDay.Api.Endpoints;
+﻿using MergeDay.Api.Domain.Entities;
+using MergeDay.Api.Endpoints;
 using MergeDay.Api.Infrastructure.Persistence;
-using MergeDayApi.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MergeDay.Api.Features.Workspaces;

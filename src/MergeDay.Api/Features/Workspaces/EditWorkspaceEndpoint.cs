@@ -9,7 +9,7 @@ public static class EditWorkspaceEndpoint
     public record EditWorkspaceRequest(string Name, ICollection<string> UserIds);
 
     [EndpointGroup("Workspaces")]
-    public sealed class Endpoints : IEndpoint
+    public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {

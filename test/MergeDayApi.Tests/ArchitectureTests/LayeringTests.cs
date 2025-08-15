@@ -1,18 +1,18 @@
-﻿namespace MergeDayApi.Tests.ArchitectureTests;
-
-using System.Reflection;
+﻿using System.Reflection;
 using MergeDay.Api.Endpoints;
 using MergeDayApi.Tests.Infrastructure;
 using NetArchTest.Rules;
+
+namespace MergeDayApi.Tests.ArchitectureTests;
 
 [Trait("Category", TestCategories.Architecture)]
 public class LayeringTests
 {
     private readonly Assembly _assembly = typeof(IEndpoint).Assembly;
 
-    private readonly string _features = NamespaceRegexHelpers.ExactOrChildNamespace("MergeDayApi.Features.Absences");
-    private readonly string _domain = NamespaceRegexHelpers.ExactOrChildNamespace("MergeDayApi.Domain");
-    private readonly string _endpoints = NamespaceRegexHelpers.ExactOrChildNamespace("MergeDayApi.Endpoints");
+    private readonly string _features = NamespaceRegexHelpers.ExactOrChildNamespace("MergeDay.Api.Features.Absences");
+    private readonly string _domain = NamespaceRegexHelpers.ExactOrChildNamespace("MergeDay.Api.Domain");
+    private readonly string _endpoints = NamespaceRegexHelpers.ExactOrChildNamespace("MergeDay.Api.Endpoints");
 
     [Fact]
     public void Domain_ShouldNotDependOnOtherLayers()

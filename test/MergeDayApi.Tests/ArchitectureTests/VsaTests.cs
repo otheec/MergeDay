@@ -15,7 +15,7 @@ public class VsaTests
         // Get all feature types
         var featureTypes = Types.InAssembly(_assembly)
             .That()
-            .ResideInNamespace("MergeDayApi.Features")
+            .ResideInNamespace("MergeDay.Api.Features")
             .GetTypes();
 
         // Group by main feature area (e.g., Products, Categories)
@@ -63,7 +63,7 @@ public class VsaTests
         // Get all public static Handler methods from feature classes
         var handlerMethods = Types.InAssembly(_assembly)
             .That()
-            .ResideInNamespace("MergeDayApi.Features")
+            .ResideInNamespace("MergeDay.Api.Features")
             .GetTypes()
             .SelectMany(t => t.GetMethods(BindingFlags.Public | BindingFlags.Static))
             .Where(m => m.Name == "Handler")

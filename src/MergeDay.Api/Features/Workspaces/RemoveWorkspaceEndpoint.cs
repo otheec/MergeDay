@@ -7,7 +7,7 @@ namespace MergeDay.Api.Features.Workspaces;
 public static class RemoveWorkspaceEndpoint
 {
     [EndpointGroup("Workspaces")]
-    public sealed class Endpoints : IEndpoint
+    public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
