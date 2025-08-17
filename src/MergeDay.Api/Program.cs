@@ -1,4 +1,5 @@
 using MergeDay.Api.Endpoints;
+using MergeDay.Api.Features.Fakturoid;
 using MergeDay.Api.Features.Toggl;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
@@ -11,6 +12,7 @@ builder.Services.AddEndpoints(typeof(Program).Assembly);
 builder.Services.AddDbContext<MergeDayDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MergeDayDb")));
 builder.Services.AddToggl();
+builder.Services.AddFakturoid(builder.Configuration["Fakturoid:BaseUrl"]);
 
 var app = builder.Build();
 
