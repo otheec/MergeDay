@@ -17,29 +17,25 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MergeDay API", Version = "v1" });
+
+    // Use HTTP Bearer, not ApiKey
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Name = "Authorization",
-        Type = SecuritySchemeType.ApiKey,
-        Scheme = "Bearer",
+        Type = SecuritySchemeType.Http,
+        Scheme = "bearer",
         BearerFormat = "JWT",
-        In = ParameterLocation.Header,
-        Description = "Enter 'Bearer {your token}'"
+        Description = "Paste your JWT. No 'Bearer ' prefix needed."
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
+{
     {
+        new OpenApiSecurityScheme
         {
-            new OpenApiSecurityScheme
-            {
-                Reference = new OpenApiReference
-                {
-                    Type = ReferenceType.SecurityScheme,
-                    Id = "Bearer"
-                }
-            },
-            Array.Empty<string>()
-        }
-    });
+            Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" }
+        },
+        Array.Empty<string>()
+    }
+});
 });
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 builder.Services.AddDbContext<MergeDayDbContext>(opt =>
@@ -58,28 +54,25 @@ builder.Services
     {
         options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
         options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
+    }).
+    AddJwtBearer(options =>
     {
-        var jwtSettings = builder.Configuration.GetSection("Jwt");
+        var jwt = builder.Configuration.GetSection("Jwt");
+
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
-            ValidIssuer = jwtSettings["Issuer"],
-
+            ValidIssuer = jwt["Issuer"],
             ValidateAudience = true,
-            ValidAudience = jwtSettings["Audience"],
-
+            ValidAudience = jwt["Audience"],
             ValidateLifetime = true,
-            ClockSkew = TimeSpan.Zero,
-
+            ClockSkew = TimeSpan.FromSeconds(30),
             ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(jwtSettings["Key"]!)
-            ),
-            RoleClaimType = "role",
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwt["Key"]!)),
+            RoleClaimType = ClaimTypes.Role
         };
     });
+
 builder.Services.AddAuthorization();
 builder.Services.AddToggl(
     builder.Configuration["Toggl:ApiToken"],
@@ -95,10 +88,11 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapEndpoints();
 
-app.UseHttpsRedirection();
 
 app.Run();

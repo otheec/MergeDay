@@ -19,7 +19,7 @@ public static class GetAllWorkspacesEndpoint
             app.MapStandardGet<ICollection<GetAllWorkspacesResponse>>("", Handler)
                 .WithName("Get all workspaces")
                 .WithSummary("Retrieve all workspaces.")
-                .RequireAuthorization(UserRole.User);
+                .RequireAuthorization([UserRole.User, UserRole.Admin]);
         }
     }
 
