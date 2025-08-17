@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace MergeDay.Api.Features.Toggl;
+namespace MergeDay.Api.Features.Toggl.Connector.Respose;
 
 public class TogglTimeEntryDto
 {

@@ -1,6 +1,7 @@
-﻿using Refit;
+﻿using MergeDay.Api.Features.Toggl.Connector.Respose;
+using Refit;
 
-namespace MergeDay.Api.Features.Toggl;
+namespace MergeDay.Api.Features.Toggl.Connector;
 
 public interface ITogglApi
 {

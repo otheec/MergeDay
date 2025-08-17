@@ -11,7 +11,10 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 builder.Services.AddDbContext<MergeDayDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MergeDayDb")));
-builder.Services.AddToggl();
+builder.Services.AddToggl(
+    builder.Configuration["Toggl:ApiToken"],
+    builder.Configuration["Toggl:BaseUrl"]
+);
 builder.Services.AddFakturoid(builder.Configuration["Fakturoid:BaseUrl"]);
 
 var app = builder.Build();

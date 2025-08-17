@@ -1,4 +1,6 @@
 ﻿using MergeDay.Api.Endpoints;
+using MergeDay.Api.Features.Toggl.Connector;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MergeDay.Api.Features.Toggl;
 
@@ -19,13 +21,12 @@ public class GetTimeEntriesEndpoint
     }
 
     public static async Task<IResult> Handler(
+        [FromQuery] DateTime start,
+        [FromQuery] DateTime end,
         ILoggerFactory loggerFactory,
         TogglService togglService)
     {
         var logger = loggerFactory.CreateLogger(nameof(GetTimeEntriesEndpoint));
-
-        var start = DateTime.UtcNow.AddMonths(-1);
-        var end = DateTime.UtcNow;
 
         var timeEntries = await togglService.GetTimeEntriesAsync(start, end);
 

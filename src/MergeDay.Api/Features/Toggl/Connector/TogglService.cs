@@ -1,4 +1,6 @@
-﻿namespace MergeDay.Api.Features.Toggl;
+﻿using MergeDay.Api.Features.Toggl.Connector.Respose;
+
+namespace MergeDay.Api.Features.Toggl.Connector;
 
 public class TogglService(ITogglApi togglApi)
 {
