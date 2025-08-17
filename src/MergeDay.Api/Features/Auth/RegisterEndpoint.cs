@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Domain.Entities;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Domain.Entities;
 using MergeDay.Api.Endpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,9 +23,15 @@ public static class RegisterEndpoint
     }
 
     public static async Task<IResult> Handler(
-        [FromBody] RegisterRequest request,
-        [FromServices] UserManager<ApplicationUser> userManager)
+            [FromBody] RegisterRequest request,
+            [FromServices] UserManager<ApplicationUser> userManager,
+            [FromServices] RoleManager<IdentityRole<Guid>> roleManager)
     {
+        if (!await roleManager.RoleExistsAsync(UserRole.User.ToString()))
+            await roleManager.CreateAsync(new IdentityRole<Guid>(UserRole.User.ToString()));
+        if (!await roleManager.RoleExistsAsync(UserRole.Admin.ToString()))
+            await roleManager.CreateAsync(new IdentityRole<Guid>(UserRole.Admin.ToString()));
+
         var user = new ApplicationUser
         {
             UserName = request.Email,
@@ -38,6 +45,10 @@ public static class RegisterEndpoint
             return Results.BadRequest(result.Errors.Select(e => e.Description));
         }
 
-        return Results.Ok(new { Message = "User registered successfully" });
+        var roleToAssign = UserRole.User.ToString();
+        await userManager.AddToRoleAsync(user, roleToAssign);
+
+        return Results.Ok(new { Message = $"User registered successfully with role {roleToAssign}" });
     }
+
 }

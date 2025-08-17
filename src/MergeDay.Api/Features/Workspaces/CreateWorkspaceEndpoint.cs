@@ -17,7 +17,7 @@ public static class CreateWorkspaceEndpoint
             app.MapStandardPost<CreateWorkspaceRequest, IResult>("", Handler)
                 .WithName("Create workspace")
                 .WithSummary("Create a new workspace with the specified users.")
-                .AllowAnonymous();
+                .RequireAuthorization();
         }
     }
 

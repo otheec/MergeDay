@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MergeDay.Api.Features.Absences;
 
-public static class GetWorkersAbsence
+public static class GetWorkersAbsenceEndpoint
 {
     public record GetWorkersAbsenceResponse(string UserId, ICollection<AbsenceDto> Absences);
     public record AbsenceDto(long Id, DateTime StartDate, DateTime EndDate, AbsenceKind Kind, AbsenceStatus Status);
@@ -19,7 +19,7 @@ public static class GetWorkersAbsence
             app.MapStandardGet<GetWorkersAbsenceResponse>("/workers/{userId}", Handler)
                 .WithName("Get worker's absence")
                 .WithSummary("Retrieve the absence details for a specific user in a workspace.")
-                .AllowAnonymous();
+                .RequireAuthorization();
         }
     }
 
@@ -30,7 +30,7 @@ public static class GetWorkersAbsence
         [FromQuery] DateTime? StartDate = null,
         [FromQuery] DateTime? EndDate = null)
     {
-        var logger = loggerFactory.CreateLogger(nameof(GetWorkersAbsence));
+        var logger = loggerFactory.CreateLogger(nameof(GetWorkersAbsenceEndpoint));
 
         var absences = await dbContext.Absences
             .Where(a => a.UserId == userId)

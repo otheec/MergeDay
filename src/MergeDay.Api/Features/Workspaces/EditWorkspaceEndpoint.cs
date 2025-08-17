@@ -16,7 +16,7 @@ public static class EditWorkspaceEndpoint
             app.MapStandardPut<EditWorkspaceRequest>("/{workspaceId}", Handler)
                 .WithName("Edit workspace")
                 .WithSummary("Edit an existing workspace by its ID.")
-                .AllowAnonymous();
+                .RequireAuthorization();
         }
     }
 

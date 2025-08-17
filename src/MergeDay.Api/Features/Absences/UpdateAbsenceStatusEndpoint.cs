@@ -23,7 +23,7 @@ public static class UpdateAbsenceStatusEndpoint
             app.MapStandardPost<UpdateAbsenceStatusRequest, IResult>("/{id}/approve", Handler)
                 .WithName("Approve absence")
                 .WithSummary("Approves an existing absence request by id.")
-                .AllowAnonymous();
+                .RequireAuthorization();
         }
     }
 

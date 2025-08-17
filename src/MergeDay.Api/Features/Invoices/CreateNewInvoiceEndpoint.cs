@@ -18,8 +18,9 @@ public static class CreateNewInvoiceEndpoint
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
             app.MapStandardPost<CreateNewInvoiceRequest, IResult>("/invoices", Handler)
-               .WithName("Create and submit new invoice")
-               .WithSummary("Creates a new invoice in Fakturoid.");
+                .WithName("Create and submit new invoice")
+                .WithSummary("Creates a new invoice in Fakturoid.")
+                .RequireAuthorization();
         }
     }
 

@@ -21,8 +21,9 @@ public static class CreateFakturoidInvoiceEndpoint
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
             app.MapStandardPost<CreateFakturoidInvoiceRequest, CreateFakturoidInvoiceResponse>("/invoices", Handler)
-               .WithName("CreateFakturoidInvoice")
-               .WithSummary("Creates a new invoice in Fakturoid.");
+                .WithName("CreateFakturoidInvoice")
+                .WithSummary("Creates a new invoice in Fakturoid.")
+                .RequireAuthorization();
         }
     }
 

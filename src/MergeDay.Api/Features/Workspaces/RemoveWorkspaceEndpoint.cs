@@ -14,7 +14,7 @@ public static class RemoveWorkspaceEndpoint
             app.MapStandardDelete("/{workspaceId}", Handler)
                 .WithName("Remove workspace")
                 .WithSummary("Remove a workspace by its ID.")
-                .AllowAnonymous();
+                .RequireAuthorization();
         }
     }
 

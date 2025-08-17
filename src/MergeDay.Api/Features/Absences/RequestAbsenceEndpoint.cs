@@ -18,7 +18,7 @@ public static class RequestAbsenceEndpoint
             app.MapStandardPost<RequestAbsenceRequest, IResult>("/request", Handler)
                 .WithName("Request absence")
                 .WithSummary("Submit a request to be marked as absent for a date range.")
-                .AllowAnonymous();
+                .RequireAuthorization();
         }
     }
 

@@ -9,4 +9,6 @@ public class ApplicationUser : IdentityUser<Guid>
     public string? FakturoidSlug { get; set; }
     public string? FakturoidClientId { get; set; }
     public string? FakturoidClientSecret { get; set; }
+
+    public decimal? PricePerHours { get; set; }
 }

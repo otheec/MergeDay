@@ -11,7 +11,8 @@ public static class EditUserEndpoint
         string? TogglApiToken,
         string? FakturoidSlug,
         string? FakturoidClientId,
-        string? FakturoidClientSecret);
+        string? FakturoidClientSecret,
+        decimal PricePerHour);
 
     [EndpointGroup("Users")]
     public sealed class Endpoint : IEndpoint
@@ -20,7 +21,8 @@ public static class EditUserEndpoint
         {
             app.MapStandardPut<EditUserRequest, IResult>("users/{id:guid}", Handler)
                 .WithName("EditUser")
-                .WithSummary("Edit a user's profile (no self-verification).");
+                .WithSummary("Edit a user's profile (no self-verification).")
+                .RequireAuthorization();
         }
     }
 
@@ -37,6 +39,7 @@ public static class EditUserEndpoint
         user.FakturoidSlug = request.FakturoidSlug;
         user.FakturoidClientId = request.FakturoidClientId;
         user.FakturoidClientSecret = request.FakturoidClientSecret;
+        user.PricePerHours = request.PricePerHour;
 
         var result = await userManager.UpdateAsync(user);
         if (!result.Succeeded)

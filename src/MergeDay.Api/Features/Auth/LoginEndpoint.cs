@@ -20,7 +20,7 @@ public static class LoginEndpoint
         {
             app.MapStandardPost<LoginRequest, string?>("login", Handler)
                 .WithName("Login user")
-                .WithSummary("Authenticate and return a JWT token.")
+                .WithSummary("Authenticate and return a JWT token with roles.")
                 .AllowAnonymous();
         }
     }
@@ -39,12 +39,15 @@ public static class LoginEndpoint
         if (!result.Succeeded)
             return Results.Unauthorized();
 
-        var claims = new[]
+        var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new Claim(JwtRegisteredClaimNames.Email, user.Email!),
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
         };
+
+        var roles = await userManager.GetRolesAsync(user);
+        claims.AddRange(roles.Select(role => new Claim("role", role)));
 
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["Jwt:Key"]!));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

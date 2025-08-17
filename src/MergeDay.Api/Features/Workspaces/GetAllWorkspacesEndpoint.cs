@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Endpoints;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Endpoints;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -18,7 +19,7 @@ public static class GetAllWorkspacesEndpoint
             app.MapStandardGet<ICollection<GetAllWorkspacesResponse>>("", Handler)
                 .WithName("Get all workspaces")
                 .WithSummary("Retrieve all workspaces.")
-                .AllowAnonymous();
+                .RequireAuthorization(UserRole.User);
         }
     }
 

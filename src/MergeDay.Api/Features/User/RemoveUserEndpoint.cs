@@ -14,7 +14,8 @@ public static class RemoveUserEndpoint
         {
             app.MapStandardDelete("users/{id}", Handler)
                 .WithName("DeleteUser")
-                .WithSummary("Delete a user (no self-verification).");
+                .WithSummary("Delete a user (no self-verification).")
+                .RequireAuthorization();
         }
     }
 
