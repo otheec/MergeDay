@@ -1,5 +1,5 @@
-﻿using MergeDay.Api.Endpoints;
-using MergeDay.Api.Features.Fakturoid.Connector;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Endpoints;
 using MergeDay.Api.Features.Fakturoid.Connector.Request;
 using Microsoft.AspNetCore.Mvc;
 

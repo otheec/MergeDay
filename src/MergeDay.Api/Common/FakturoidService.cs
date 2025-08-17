@@ -1,8 +1,10 @@
-﻿using MergeDay.Api.Features.Fakturoid.Connector.Request;
+﻿using MergeDay.Api.Features.Fakturoid;
+using MergeDay.Api.Features.Fakturoid.Connector;
+using MergeDay.Api.Features.Fakturoid.Connector.Request;
 using MergeDay.Api.Features.Fakturoid.Connector.Response;
 using Microsoft.Extensions.Options;
 
-namespace MergeDay.Api.Features.Fakturoid.Connector;
+namespace MergeDay.Api.Common;
 
 public class FakturoidService
 {

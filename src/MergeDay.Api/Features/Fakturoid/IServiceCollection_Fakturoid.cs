@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Features.Fakturoid.Auth;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Features.Fakturoid.Auth;
 using MergeDay.Api.Features.Fakturoid.Connector;
 using Refit;
 

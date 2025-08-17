@@ -10,4 +10,5 @@ public class MergeDayDbContext(DbContextOptions<MergeDayDbContext> options)
 {
     public DbSet<Absence> Absences { get; set; }
     public DbSet<Workspace> Workspaces { get; set; }
+    public DbSet<TogglProject> TogglProjects { get; set; }
 }

@@ -1,5 +1,5 @@
-﻿using MergeDay.Api.Endpoints;
-using MergeDay.Api.Features.Toggl.Connector;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Endpoints;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MergeDay.Api.Features.Toggl;
