@@ -12,7 +12,7 @@ public static class RemoveUserEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapDelete("users/{id:guid}", Handler)
+            app.MapStandardDelete("users/{id}", Handler)
                 .WithName("DeleteUser")
                 .WithSummary("Delete a user (no self-verification).");
         }
