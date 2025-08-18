@@ -216,3 +216,7 @@ indent_size = 2
 end_of_line = lf
 [*.{cmd,bat}]
 end_of_line = crlf
+
+# Frontend files
+[*.{js,ts,jsx,tsx,css,scss,html}]
+indent_size = 2
