@@ -12,6 +12,7 @@ public static class IServiceCollection_Fakturoid
         services.AddOptions<FakturoidOptions>()
             .BindConfiguration("Fakturoid")
             .ValidateDataAnnotations();
+        services.AddHttpContextAccessor();
 
         services.AddRefitClient<IFakturoidAuthApi>()
             .ConfigureHttpClient(c => c.BaseAddress = new Uri(baseUrl));

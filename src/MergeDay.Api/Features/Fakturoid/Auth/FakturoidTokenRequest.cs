@@ -5,6 +5,6 @@ namespace MergeDay.Api.Features.Fakturoid.Auth;
 public class FakturoidTokenRequest
 {
     [JsonPropertyName("grant_type")]
-    public string GrantType { get; } = "client_credentials";
+    public string GrantType { get; set; } = "client_credentials";
 }
 
