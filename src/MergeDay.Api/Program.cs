@@ -79,7 +79,6 @@ builder.Services
 
 builder.Services.AddAuthorization();
 builder.Services.AddToggl(
-    builder.Configuration["Toggl:ApiToken"],
     builder.Configuration["Toggl:BaseUrl"]
 );
 builder.Services.AddFakturoid(builder.Configuration["Fakturoid:BaseUrl"]);
