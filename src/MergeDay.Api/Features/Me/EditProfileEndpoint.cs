@@ -4,37 +4,40 @@ using MergeDay.Api.Endpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
-namespace MergeDay.Api.Features.User;
+namespace MergeDay.Api.Features.Me;
 
-public static class EditUserEndpoint
+public static class EditProfileEndpoint
 {
-    public record EditUserRequest(
+    public record EditProfileRequest(
         string? TogglApiToken,
         string? FakturoidSlug,
         string? FakturoidClientId,
         string? FakturoidClientSecret,
-        decimal PricePerHour);
+        decimal? PricePerHour);
 
-    [EndpointGroup("Users")]
+    [EndpointGroup("Me")]
     public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapStandardPut<EditUserRequest, IResult>("users/{id:guid}", Handler)
-                .WithName("EditUser")
-                .WithSummary("Edit a user's profile (no self-verification).")
-                .RequireAuthorization(AppPolicy.AdminOnly);
+            app.MapStandardPut<EditProfileRequest, IResult>("", Handler)
+                .WithName("EditProfile")
+                .WithSummary("Edit your profile.")
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
-
     public static async Task<IResult> Handler(
-        [FromRoute] Guid id,
-        [FromBody] EditUserRequest request,
-        [FromServices] UserManager<ApplicationUser> userManager)
+        [FromBody] EditProfileRequest request,
+        [FromServices] UserManager<ApplicationUser> userManager,
+        [FromServices] IHttpContextAccessor httpContextAccessor)
     {
-        var user = await userManager.FindByIdAsync(id.ToString());
+        var principal = httpContextAccessor.HttpContext?.User;
+        if (principal is null)
+            return Results.Unauthorized();
+
+        var user = await userManager.GetUserAsync(principal);
         if (user is null)
-            return Results.NotFound(new { message = "User not found" });
+            return Results.Unauthorized();
 
         user.TogglApiToken = request.TogglApiToken;
         user.FakturoidSlug = request.FakturoidSlug;
@@ -49,4 +52,3 @@ public static class EditUserEndpoint
         return Results.Ok();
     }
 }
-
