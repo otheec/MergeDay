@@ -9,7 +9,7 @@ root = true
 [*]
 insert_final_newline = true
 indent_style = space
-indent_size = 2
+indent_size = 4
 trim_trailing_whitespace = true
 
 # Generated code
@@ -216,3 +216,7 @@ indent_size = 2
 end_of_line = lf
 [*.{cmd,bat}]
 end_of_line = crlf
+
+# Frontend files
+[*.{js,ts,jsx,tsx,css,scss,html}]
+indent_size = 2
