@@ -1,21 +1,19 @@
 ﻿using System.Net.Http.Headers;
 
-public class FakturoidAuthHandler : DelegatingHandler
+namespace MergeDay.Api.Features.Fakturoid.Auth;
+
+public class FakturoidAuthHandler(FakturoidAuthService auth) : DelegatingHandler
 {
-    private readonly FakturoidAuthService _auth;
-
-    public FakturoidAuthHandler(FakturoidAuthService auth) => _auth = auth;
-
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var (token, slug, userAgent) = await _auth.GetAccessAsync(cancellationToken);
+        var (token, slug, userAgent) = await auth.GetAccessAsync(cancellationToken);
 
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        request.Headers.Add("User-Agent", userAgent);
+        request.Headers.Authorization = new AuthenticationHeaderValue(Constants_Fakturoid.AuthHeaderBearer, token);
+        request.Headers.Add(Constants_Fakturoid.UserAgentHeader, userAgent);
 
-        if (request.RequestUri != null && request.RequestUri.OriginalString.Contains("slug-placeholder"))
+        if (request.RequestUri != null && request.RequestUri.OriginalString.Contains(Constants_Fakturoid.SlugPlaceholder))
         {
-            var newUri = request.RequestUri.OriginalString.Replace("slug-placeholder", slug);
+            var newUri = request.RequestUri.OriginalString.Replace(Constants_Fakturoid.SlugPlaceholder, slug);
             request.RequestUri = new Uri(newUri, UriKind.RelativeOrAbsolute);
         }
 

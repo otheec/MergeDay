@@ -8,7 +8,7 @@ public interface IFakturoidAuthApi
     Task<FakturoidTokenResponse> GetTokenAsync(
         [Body(BodySerializationMethod.Serialized)] FakturoidTokenRequest request,
         [Header("Authorization")] string authorization,
-        [Header("User-Agent")] string userAgent,
+        [Header(Constants_Fakturoid.UserAgentHeader)] string userAgent,
         [Header("Accept")] string accept = "application/json"
     );
 }

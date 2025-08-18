@@ -46,7 +46,6 @@ public class FakturoidAuthService
         var basicAuth = "Basic " +
             Convert.ToBase64String(System.Text.Encoding.UTF8.GetBytes($"{user.FakturoidClientId}:{user.FakturoidClientSecret}"));
 
-        Console.WriteLine($"POST /oauth/token grant_type=client_credentials, Auth={basicAuth.Substring(0, 15)}..., UA={user.Email}");
         var response = await _authApi.GetTokenAsync(
             new FakturoidTokenRequest(),
             basicAuth,
