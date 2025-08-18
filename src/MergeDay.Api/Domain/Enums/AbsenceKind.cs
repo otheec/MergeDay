@@ -1,4 +1,4 @@
-﻿namespace MergeDay.Api.Domain;
+﻿namespace MergeDay.Api.Domain.Enums;
 
 public enum AbsenceKind
 {

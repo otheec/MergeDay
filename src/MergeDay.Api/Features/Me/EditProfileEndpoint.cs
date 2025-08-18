@@ -43,7 +43,7 @@ public static class EditProfileEndpoint
         user.FakturoidSlug = request.FakturoidSlug;
         user.FakturoidClientId = request.FakturoidClientId;
         user.FakturoidClientSecret = request.FakturoidClientSecret;
-        user.PricePerHours = request.PricePerHour;
+        user.PricePerHour = request.PricePerHour;
 
         var result = await userManager.UpdateAsync(user);
         if (!result.Succeeded)

@@ -1,4 +1,6 @@
-﻿namespace MergeDay.Api.Domain.Entities;
+﻿using MergeDay.Api.Domain.Enums;
+
+namespace MergeDay.Api.Domain.Entities;
 
 public class Absence
 {
