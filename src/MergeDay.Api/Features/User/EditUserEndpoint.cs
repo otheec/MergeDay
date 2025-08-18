@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Domain.Entities;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Domain.Entities;
 using MergeDay.Api.Endpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ public static class EditUserEndpoint
             app.MapStandardPut<EditUserRequest, IResult>("users/{id:guid}", Handler)
                 .WithName("EditUser")
                 .WithSummary("Edit a user's profile (no self-verification).")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 

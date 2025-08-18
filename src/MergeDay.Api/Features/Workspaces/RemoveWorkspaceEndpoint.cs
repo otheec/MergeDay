@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Endpoints;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Endpoints;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +15,7 @@ public static class RemoveWorkspaceEndpoint
             app.MapStandardDelete("/{workspaceId}", Handler)
                 .WithName("Remove workspace")
                 .WithSummary("Remove a workspace by its ID.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 

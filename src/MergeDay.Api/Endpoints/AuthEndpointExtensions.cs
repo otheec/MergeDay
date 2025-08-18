@@ -5,15 +5,26 @@ namespace MergeDay.Api.Endpoints;
 
 public static class AuthEndpointExtensions
 {
-    public static RouteHandlerBuilder RequireAuthorization(this RouteHandlerBuilder builder, UserRole role)
+    public static RouteHandlerBuilder RequireAuthorization(this RouteHandlerBuilder builder, AppPolicy policy)
+        => builder.RequireAuthorization(policy.ToString());
+
+    public static RouteGroupBuilder RequireAuthorization(this RouteGroupBuilder group, AppPolicy policy)
+        => group.RequireAuthorization(policy.ToString());
+
+
+    public static void AddPolicy(this AuthorizationOptions options, AppPolicy policy, Action<AuthorizationPolicyBuilder> configure)
     {
-        return builder.RequireAuthorization(new AuthorizeAttribute { Roles = role.ToString() });
+        options.AddPolicy(policy.ToString(), configure);
     }
 
-    public static RouteHandlerBuilder RequireAuthorization(this RouteHandlerBuilder builder, IEnumerable<UserRole> roles)
+    public static void AddPolicies(this AuthorizationOptions options)
     {
-        var roleNames = string.Join(",", roles.Select(r => r.ToString()));
-        return builder.RequireAuthorization(new AuthorizeAttribute { Roles = roleNames });
+        options.AddPolicy(AppPolicy.UserOrAdmin, p =>
+            p.RequireAuthenticatedUser()
+            .RequireRole(nameof(UserRole.User), nameof(UserRole.Admin)));
+
+        options.AddPolicy(AppPolicy.AdminOnly, p =>
+            p.RequireRole(nameof(UserRole.Admin)));
     }
 }
 

@@ -23,7 +23,7 @@ public static class CreateFakturoidInvoiceEndpoint
             app.MapStandardPost<CreateFakturoidInvoiceRequest, CreateFakturoidInvoiceResponse>("/invoices", Handler)
                 .WithName("CreateFakturoidInvoice")
                 .WithSummary("Creates a new invoice in Fakturoid.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 

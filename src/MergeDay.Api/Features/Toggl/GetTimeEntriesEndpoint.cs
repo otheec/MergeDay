@@ -16,7 +16,7 @@ public class GetTimeEntriesEndpoint
             app.MapStandardGet<IEnumerable<GetTimeEntriesResponse>>("/time-entries", Handler)
                 .WithName("Get time entries")
                 .WithSummary("Retrieve time entries for a specific user in a workspace.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 

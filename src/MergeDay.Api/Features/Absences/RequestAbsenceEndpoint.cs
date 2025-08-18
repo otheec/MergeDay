@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Domain;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Domain;
 using MergeDay.Api.Domain.Entities;
 using MergeDay.Api.Endpoints;
 using MergeDay.Api.Infrastructure.Persistence;
@@ -18,7 +19,7 @@ public static class RequestAbsenceEndpoint
             app.MapStandardPost<RequestAbsenceRequest, IResult>("/request", Handler)
                 .WithName("Request absence")
                 .WithSummary("Submit a request to be marked as absent for a date range.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 

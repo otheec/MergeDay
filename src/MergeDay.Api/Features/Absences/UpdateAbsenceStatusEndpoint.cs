@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Domain;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Domain;
 using MergeDay.Api.Endpoints;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -23,7 +24,7 @@ public static class UpdateAbsenceStatusEndpoint
             app.MapStandardPost<UpdateAbsenceStatusRequest, IResult>("/{id}/approve", Handler)
                 .WithName("Approve absence")
                 .WithSummary("Approves an existing absence request by id.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.AdminOnly);
         }
     }
 

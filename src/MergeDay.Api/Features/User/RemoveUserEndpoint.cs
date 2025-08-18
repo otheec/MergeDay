@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Domain.Entities;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Domain.Entities;
 using MergeDay.Api.Endpoints;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +16,7 @@ public static class RemoveUserEndpoint
             app.MapStandardDelete("users/{id}", Handler)
                 .WithName("DeleteUser")
                 .WithSummary("Delete a user (no self-verification).")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.AdminOnly);
         }
     }
 

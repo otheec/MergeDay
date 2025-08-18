@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Domain;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Domain;
 using MergeDay.Api.Endpoints;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -19,7 +20,7 @@ public static class GetWorkersAbsenceEndpoint
             app.MapStandardGet<GetWorkersAbsenceResponse>("/workers/{userId}", Handler)
                 .WithName("Get worker's absence")
                 .WithSummary("Retrieve the absence details for a specific user in a workspace.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 

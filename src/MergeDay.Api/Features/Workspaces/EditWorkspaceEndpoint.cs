@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Endpoints;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Endpoints;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,7 +17,7 @@ public static class EditWorkspaceEndpoint
             app.MapStandardPut<EditWorkspaceRequest>("/{workspaceId}", Handler)
                 .WithName("Edit workspace")
                 .WithSummary("Edit an existing workspace by its ID.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 

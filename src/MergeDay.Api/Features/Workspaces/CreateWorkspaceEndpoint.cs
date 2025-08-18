@@ -1,4 +1,5 @@
-﻿using MergeDay.Api.Domain.Entities;
+﻿using MergeDay.Api.Common;
+using MergeDay.Api.Domain.Entities;
 using MergeDay.Api.Endpoints;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
@@ -17,7 +18,7 @@ public static class CreateWorkspaceEndpoint
             app.MapStandardPost<CreateWorkspaceRequest, IResult>("", Handler)
                 .WithName("Create workspace")
                 .WithSummary("Create a new workspace with the specified users.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 

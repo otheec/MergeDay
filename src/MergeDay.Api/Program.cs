@@ -37,6 +37,10 @@ builder.Services.AddSwaggerGen(c =>
     }
 });
 });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicies();
+});
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 builder.Services.AddDbContext<MergeDayDbContext>(opt =>
     opt.UseSqlServer(builder.Configuration.GetConnectionString("MergeDayDb")));

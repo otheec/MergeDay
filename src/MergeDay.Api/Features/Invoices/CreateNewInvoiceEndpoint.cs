@@ -20,7 +20,7 @@ public static class CreateNewInvoiceEndpoint
             app.MapStandardPost<CreateNewInvoiceRequest, IResult>("/invoices", Handler)
                 .WithName("Create and submit new invoice")
                 .WithSummary("Creates a new invoice in Fakturoid.")
-                .RequireAuthorization();
+                .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
 
@@ -30,8 +30,6 @@ public static class CreateNewInvoiceEndpoint
         [FromServices] TogglService togglService,
         [FromServices] MergeDayDbContext dbContext)
     {
-        // Add time entries validation (project not null, descrption not null,...
-        // filter inly time entries that have already stoped
         var timeEntries = await togglService.GetTimeEntriesAsync(req.From, req.to);
         timeEntries = timeEntries
             .Where(t => t.ProjectId != null)
