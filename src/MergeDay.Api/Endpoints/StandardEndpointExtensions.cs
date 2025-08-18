@@ -9,6 +9,7 @@ public static class StandardEndpointExtensions
         string pattern,
         Delegate handler,
         Action<RouteHandlerBuilder>? configureEndpoint = null)
+        where TRequest : notnull
     {
         var routeHandler = builder.MapPost(pattern, handler)
             .Produces<TResponse>(StatusCodes.Status200OK)
@@ -71,6 +72,7 @@ public static class StandardEndpointExtensions
         string pattern,
         Delegate handler,
         Action<RouteHandlerBuilder>? configureEndpoint = null)
+        where TRequest : notnull
     {
         var routeHandler = builder.MapPut(pattern, handler)
             .Produces(StatusCodes.Status204NoContent)
@@ -90,8 +92,8 @@ public static class StandardEndpointExtensions
         this IEndpointRouteBuilder builder,
         string pattern,
         Delegate handler,
-        Action<RouteHandlerBuilder>? configureEndpoint = null
-    )
+        Action<RouteHandlerBuilder>? configureEndpoint = null)
+        where TRequest : notnull
     {
         var route = builder
             .MapPut(pattern, handler)

@@ -1,7 +1,5 @@
 ﻿using System.Net.Http.Headers;
 
-namespace MergeDay.Api.Features.Fakturoid.Auth;
-
 public class FakturoidAuthHandler : DelegatingHandler
 {
     private readonly FakturoidAuthService _auth;
@@ -10,8 +8,16 @@ public class FakturoidAuthHandler : DelegatingHandler
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {
-        var token = await _auth.GetAccessTokenAsync();
+        var (token, slug, userAgent) = await _auth.GetAccessAsync(cancellationToken);
+
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        request.Headers.Add("User-Agent", userAgent);
+
+        if (request.RequestUri != null && request.RequestUri.OriginalString.Contains("slug-placeholder"))
+        {
+            var newUri = request.RequestUri.OriginalString.Replace("slug-placeholder", slug);
+            request.RequestUri = new Uri(newUri, UriKind.RelativeOrAbsolute);
+        }
 
         return await base.SendAsync(request, cancellationToken);
     }
