@@ -44,7 +44,7 @@ public static class GetProfileEndpoint
             user.FakturoidSlug,
             user.FakturoidClientId,
             user.FakturoidClientSecret,
-            user.PricePerHours
+            user.PricePerHour
         ));
     }
 }
