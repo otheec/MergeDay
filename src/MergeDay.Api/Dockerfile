@@ -1,30 +1,32 @@
-# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
-# This stage is used when running from VS in fast mode (Default for Debug configuration)
+# Base runtime image
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
 EXPOSE 8081
 
-
-# This stage is used to build the service project
+# Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["src/MergeDayApi/MergeDayApi.csproj", "src/MergeDayApi/"]
-RUN dotnet restore "./src/MergeDayApi/MergeDayApi.csproj"
-COPY . .
-WORKDIR "/src/src/MergeDayApi"
-RUN dotnet build "./MergeDayApi.csproj" -c $BUILD_CONFIGURATION -o /app/build
 
-# This stage is used to publish the service project to be copied to the final stage
+# Copy csproj and restore
+COPY ["src/MergeDay.Api/MergeDay.Api.csproj", "src/MergeDay.Api/"]
+RUN dotnet restore "src/MergeDay.Api/MergeDay.Api.csproj"
+
+# Copy the rest of the source code
+COPY . .
+
+# Build
+WORKDIR "/src/src/MergeDay.Api"
+RUN dotnet build "MergeDay.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# Publish
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./MergeDayApi.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "MergeDay.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
-# This stage is used in production or when running from VS in regular mode (Default when not using the Debug configuration)
+# Final runtime image
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "MergeDayApi.dll"]
+ENTRYPOINT ["dotnet", "MergeDay.Api.dll"]

@@ -1,4 +1,4 @@
-name: mergeday-sql
+name: mergeday
 
 services:
   sql:
@@ -16,5 +16,31 @@ services:
       interval: 10s
       timeout: 5s
       retries: 10
+
+  api:
+    build:
+      context: C:/devPersonal/MergeDay
+      dockerfile: src/MergeDay.Api/Dockerfile
+    container_name: mergeday-api
+    ports:
+      - "5000:8080"
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MergeDayDb=Server=sql;Database=MergeDayDb;User=sa;Password=Passw0rd_Strong_123!;TrustServerCertificate=True;
+    depends_on:
+      sql:
+        condition: service_healthy
+
+  client:
+    build:
+      context: C:/devPersonal/MergeDay/src/MergeDay.Client
+      dockerfile: Dockerfile
+    container_name: mergeday-client
+    ports:
+      - "3000:80"
+    depends_on:
+      - api
+
 volumes:
   mssql-data:
