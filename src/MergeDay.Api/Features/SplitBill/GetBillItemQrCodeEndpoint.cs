@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MergeDay.Api.Features.SplitBill;
 
-public class GetBillItemQrCodeEndpoint
+public static class GetBillItemQrCodeEndpoint
 {
     public record GetBillItemQrCodeResponse(bool IsPaid, string QrCode);
 
