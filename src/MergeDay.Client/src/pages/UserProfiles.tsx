@@ -1,8 +1,9 @@
 import PageBreadcrumb from "../components/common/PageBreadCrumb";
 import UserMetaCard from "../components/UserProfile/UserMetaCard";
-import UserInfoCard from "../components/UserProfile/UserInfoCard";
-import UserAddressCard from "../components/UserProfile/UserAddressCard";
 import PageMeta from "../components/common/PageMeta";
+import TogglSettingsCard from "../components/UserProfile/ToggSettingsCard";
+import FaktuoidSettingsCard from "../components/UserProfile/FaktuoidSettingsCard";
+import BankAccountSettingsCard from "../components/UserProfile/BankAccountSettingsCard";
 
 export default function UserProfiles() {
   return (
@@ -18,8 +19,9 @@ export default function UserProfiles() {
         </h3>
         <div className="space-y-6">
           <UserMetaCard />
-          <UserInfoCard />
-          <UserAddressCard />
+          <TogglSettingsCard />
+          <FaktuoidSettingsCard />
+          <BankAccountSettingsCard />
         </div>
       </div>
     </>
