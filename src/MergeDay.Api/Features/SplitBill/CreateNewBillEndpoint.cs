@@ -12,6 +12,7 @@ public static class CreateNewBillEndpoint
     public record CreateNewBillRequest(
         string Name,
         decimal Total,
+        string IBAN,
         DateTime OrderDate,
         string? Note,
         List<CreateNewBillItemRequest> Items
@@ -23,7 +24,7 @@ public static class CreateNewBillEndpoint
     );
 
     public record CreateNewBillResponse(
-        int Id,
+        Guid Id,
         string Name,
         decimal Total,
         DateTime OrderDate,
@@ -33,23 +34,22 @@ public static class CreateNewBillEndpoint
     );
 
     public record BillItemResponse(
-        int Id,
+        Guid Id,
         Guid ApplicationUserId,
         decimal Price,
         bool IsPaid
     );
 
 
-    [EndpointGroup("Split-Bill")]
+    [EndpointGroup("Bills")]
     public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapStandardPost<CreateNewBillRequest, CreateNewBillResponse>("/ahoj", Handler)
+            app.MapStandardPost<CreateNewBillRequest, CreateNewBillResponse>("", Handler)
                 .WithName("CreateNewBill")
                 .WithSummary("Create a new bill")
                 .WithDescription("Creates a new bill with the provided items.")
-                .WithTags("Split Bill")
                 .Produces<CreateNewBillResponse>(StatusCodes.Status201Created)
                 .Produces(StatusCodes.Status400BadRequest)
                 .Produces(StatusCodes.Status500InternalServerError)
@@ -71,6 +71,7 @@ public static class CreateNewBillEndpoint
             ApplicationUserId = userId,
             Name = req.Name,
             Total = req.Total,
+            IBAN = req.IBAN,
             Note = req.Note,
             OrderDate = req.OrderDate,
             CreatedAt = DateTime.UtcNow,

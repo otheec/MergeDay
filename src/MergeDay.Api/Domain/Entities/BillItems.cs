@@ -4,7 +4,7 @@ namespace MergeDay.Api.Domain.Entities;
 
 public class BillItems
 {
-    public int Id { get; set; }
+    public Guid Id { get; set; }
 
     public int BillId { get; set; }
     public Bill Bill { get; set; } = null!;

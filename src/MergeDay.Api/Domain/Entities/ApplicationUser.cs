@@ -13,4 +13,6 @@ public class ApplicationUser : IdentityUser<Guid>
 
     [Column(TypeName = "decimal(18,2)")]
     public decimal? PricePerHour { get; set; }
+
+    public ICollection<string> IBANs { get; set; } = [];
 }
