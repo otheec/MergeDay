@@ -19,7 +19,7 @@ services:
 
   api:
     build:
-      context: C:/devPersonal/MergeDay
+      context: ..
       dockerfile: src/MergeDay.Api/Dockerfile
     container_name: mergeday-api
     ports:
@@ -34,7 +34,7 @@ services:
 
   client:
     build:
-      context: C:/devPersonal/MergeDay/src/MergeDay.Client
+      context: ../src/MergeDay.Client
       dockerfile: Dockerfile
     container_name: mergeday-client
     ports:
