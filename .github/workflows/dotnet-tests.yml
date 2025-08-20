@@ -1,0 +1,31 @@
+name: .NET Tests
+
+on:
+  pull_request:       # Runs on PRs
+    branches:
+      - main          # Adjust if your default branch is different
+  push:
+    branches:
+      - main          # Optional: run on direct pushes too
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'   # Or your project version
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Build
+        run: dotnet build --no-restore --configuration Release
+
+      - name: Run tests
+        run: dotnet test --no-build --configuration Release --verbosity normal
