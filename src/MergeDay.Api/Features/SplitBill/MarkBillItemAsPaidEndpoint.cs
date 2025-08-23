@@ -38,7 +38,7 @@ public static class MarkBillItemAsPaidEndpoint
 
         var billItem = await dbContext.BillItems
             .Include(bi => bi.Bill)
-                .ThenInclude(bi => bi.BillItems)
+                .ThenInclude(bi => bi.Items)
             .FirstOrDefaultAsync(bi => bi.Id == billItemId);
 
         if (billItem is null || billItem.ApplicationUserId != Guid.Parse(userId))
@@ -51,7 +51,7 @@ public static class MarkBillItemAsPaidEndpoint
             return Results.NotFound();
         }
 
-        if(billItem.Bill.BillItems.All(bi => bi.IsPaid))
+        if(billItem.Bill.Items.All(bi => bi.IsPaid))
         {
             billItem.Bill.IsPaid = true;
             billItem.Bill.PaidAt = DateTime.UtcNow;

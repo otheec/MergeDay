@@ -2,7 +2,7 @@
 
 namespace MergeDay.Api.Domain.Entities;
 
-public class BillItems
+public class BillItem
 {
     public Guid Id { get; set; }
 
@@ -14,6 +14,7 @@ public class BillItems
 
     [Column(TypeName = "decimal(18,2)")]
     public decimal Price { get; set; }
+
     public bool IsPaid { get; set; }
-    public DateTime PaidAt { get; set; }
+    public DateTime? PaidAt { get; set; }
 }
