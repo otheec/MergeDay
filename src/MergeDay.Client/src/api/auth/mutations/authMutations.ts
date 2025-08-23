@@ -23,6 +23,7 @@ export const useAuthLogin = () => {
     },
     onSuccess: (token) => {
       localStorage.setItem("token", token);
+      setIsAuthenticated(true);
     },
     onError: (error) => httpErrorHandler({
       err: error,
@@ -43,6 +44,7 @@ export const useAuthRegister = () => {
     },
     onSuccess: (token) => {
       localStorage.setItem("token", token);
+      setIsAuthenticated(true);
     },
     onError: (error) => httpErrorHandler({
       err: error,
