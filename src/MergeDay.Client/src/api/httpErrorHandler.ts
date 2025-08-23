@@ -1,13 +1,15 @@
 import {AxiosError} from "axios";
+import React from "react";
 
 type HttpErrorHandlerProps = {
   err: AxiosError,
   errorKeys: string[],
   setFieldErrors?: Record<string, (msg: string) => void>,
   onCustomError?: () => void,
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-const showErrorToast = ({ title, message }: {title: string, message: string}) => {
+const showErrorToast = ({title, message}: { title: string, message: string }) => {
   // TODO: add UI toasts
   console.error(title, message);
 }
@@ -17,6 +19,7 @@ export const httpErrorHandler = ({
                                    errorKeys,      // Array of keys to look for in the error response
                                    setFieldErrors, //Function to set field-specific errors
                                    onCustomError,  // Optional custom error handling function
+                                   setIsAuthenticated,
                                  }: HttpErrorHandlerProps) => {
   // Call the custom error handling function if provided
   onCustomError?.();
@@ -24,7 +27,7 @@ export const httpErrorHandler = ({
   // Define different error cases and their corresponding handlers
   const errorCases: Record<number | 'default', () => void> = {
     400: () => handleBadRequest(err, errorKeys, setFieldErrors), // Handle bad request errors (400)
-    401: () => handleUnauthorized(),                      // Handle unauthorized errors (401)
+    401: () => handleUnauthorized(setIsAuthenticated),           // Handle unauthorized errors (401)
     403: () => showErrorToast({                                  // Handle forbidden errors (403)
       title: 'Unauthorized',
       message: 'Permission denied'
@@ -71,7 +74,7 @@ const handleBadRequest = (
 };
 
 // Function to handle unauthorized errors (401)
-const handleUnauthorized = () => {
+const handleUnauthorized = (setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>) => {
   // Show an error toast to notify the user about token expiration
   showErrorToast({
     title: 'Error',
@@ -80,6 +83,6 @@ const handleUnauthorized = () => {
   // Clear any stored authentication data
   localStorage.removeItem("token");
   // Update the authentication state in the context
-  //context?.setIsAuthenticated(false);
+  setIsAuthenticated(false);
 };
 

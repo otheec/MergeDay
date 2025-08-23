@@ -14,9 +14,10 @@ export default function SignInForm() {
   const loginMutation = useAuthLogin()
 
   const handleSubmit = async (_previousData: unknown, formData: FormData) => {
-
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
+
+    if(!email || !password) return;
 
     loginMutation.mutate({ email, password })
   }

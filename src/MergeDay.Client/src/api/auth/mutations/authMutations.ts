@@ -3,6 +3,7 @@ import {anonymousInstance} from "../../axiosInstance.ts";
 import {APIRoutes} from "../../../config/APIRoutes.ts";
 import {httpErrorHandler} from "../../httpErrorHandler.ts";
 import {AxiosError} from "axios";
+import {useAuthContext} from "../../../context/AuthContext.tsx";
 
 type ResponseBody = string;
 
@@ -12,6 +13,8 @@ type RequestBody = {
 }
 
 export const useAuthLogin = () => {
+  const { setIsAuthenticated } = useAuthContext();
+
   return useMutation<ResponseBody, AxiosError, RequestBody>({
     mutationFn: async (data) => {
       const response = await anonymousInstance
@@ -24,16 +27,27 @@ export const useAuthLogin = () => {
     onError: (error) => httpErrorHandler({
       err: error,
       errorKeys: ["email", "password"],
+      setIsAuthenticated,
     }),
   });
 };
 
 export const useAuthRegister = () => {
-  return useMutation<ResponseBody, Error, RequestBody>({
+  const { setIsAuthenticated } = useAuthContext();
+
+  return useMutation<ResponseBody, AxiosError, RequestBody>({
     mutationFn: async (data) => {
       const response = await anonymousInstance
         .post<ResponseBody>(APIRoutes.auth.register, data);
       return response.data;
     },
+    onSuccess: (token) => {
+      localStorage.setItem("token", token);
+    },
+    onError: (error) => httpErrorHandler({
+      err: error,
+      errorKeys: ["email", "password"],
+      setIsAuthenticated,
+    }),
   })
 }
