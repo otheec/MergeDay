@@ -7,7 +7,7 @@ namespace MergeDay.Api.Features.Workspaces;
 
 public static class EditWorkspaceEndpoint
 {
-    public record EditWorkspaceRequest(string Name, ICollection<string> UserIds);
+    public record EditWorkspaceRequest(string Name, List<string> UserIds);
 
     [EndpointGroup("Workspaces")]
     public sealed class Endpoint : IEndpoint

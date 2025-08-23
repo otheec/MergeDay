@@ -79,9 +79,9 @@ builder.Services
 
 builder.Services.AddAuthorization();
 builder.Services.AddToggl(
-    builder.Configuration["Toggl:BaseUrl"]
+    builder.Configuration["Toggl:BaseUrl"]!
 );
-builder.Services.AddFakturoid(builder.Configuration["Fakturoid:BaseUrl"]);
+builder.Services.AddFakturoid(builder.Configuration["Fakturoid:BaseUrl"]!);
 
 var app = builder.Build();
 
@@ -97,5 +97,13 @@ app.UseAuthorization();
 
 app.MapEndpoints();
 
+await MigrateDatabase(app);
 
 app.Run();
+
+async Task MigrateDatabase(WebApplication app)
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    using var db = scope.ServiceProvider.GetRequiredService<MergeDayDbContext>();
+    await db.Database.MigrateAsync();
+}
