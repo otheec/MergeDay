@@ -1,9 +1,9 @@
 ﻿using System.Security.Claims;
-using MergeDay.Api.Features.Fakturoid;
-using MergeDay.Api.Features.Fakturoid.Auth;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+
+namespace MergeDay.Api.Features.Fakturoid.Auth;
 
 public class FakturoidAuthService
 {

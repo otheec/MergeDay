@@ -6,7 +6,7 @@ public class BillItems
 {
     public Guid Id { get; set; }
 
-    public int BillId { get; set; }
+    public Guid BillId { get; set; }
     public Bill Bill { get; set; } = null!;
 
     public Guid ApplicationUserId { get; set; }
