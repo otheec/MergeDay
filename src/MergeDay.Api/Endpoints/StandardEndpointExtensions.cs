@@ -127,4 +127,25 @@ public static class StandardEndpointExtensions
 
         return routeHandler;
     }
+
+    public static RouteHandlerBuilder MapStandartFilePost<TRequest, TResponse>(
+        this IEndpointRouteBuilder builder,
+        string pattern,
+        Delegate handler,
+        Action<RouteHandlerBuilder>? configureEndpoint = null)
+        where TRequest : notnull
+    {
+        var routeHandler = builder.MapPost(pattern, handler)
+            .Produces<TResponse>(StatusCodes.Status200OK)
+            .ProducesProblem(StatusCodes.Status400BadRequest)
+            .ProducesProblem(StatusCodes.Status401Unauthorized)
+            .ProducesProblem(StatusCodes.Status403Forbidden)
+            .ProducesProblem(StatusCodes.Status404NotFound)
+            .ProducesProblem(StatusCodes.Status500InternalServerError)
+            .Accepts<TRequest>("multipart/form-data");
+
+        configureEndpoint?.Invoke(routeHandler);
+
+        return routeHandler;
+    }
 }
