@@ -14,6 +14,8 @@ public class MergeDayDbContext(DbContextOptions<MergeDayDbContext> options)
     public DbSet<Bill> Bills { get; set; }
     public DbSet<BillItem> BillItems { get; set; }
 
+    public DbSet<RefreshToken> RefreshTokens { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -53,6 +55,22 @@ public class MergeDayDbContext(DbContextOptions<MergeDayDbContext> options)
 
             e.HasIndex(x => x.BillId);
             e.HasIndex(x => x.ApplicationUserId);
+        });
+
+        modelBuilder.Entity<RefreshToken>(e =>
+        {
+            e.HasKey(x => x.Id);
+            e.Property(x => x.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
+            e.Property(x => x.TokenHash).IsRequired().HasMaxLength(256);
+            e.Property(x => x.ReplacedByTokenHash).HasMaxLength(256);
+
+            e.HasIndex(x => x.TokenHash).IsUnique();
+            e.HasIndex(x => x.ApplicationUserId);
+
+            e.HasOne(x => x.ApplicationUser)
+             .WithMany(u => u.RefreshTokens)
+             .HasForeignKey(x => x.ApplicationUserId)
+             .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }
