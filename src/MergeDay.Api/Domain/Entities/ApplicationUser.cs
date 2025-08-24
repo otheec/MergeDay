@@ -17,4 +17,6 @@ public class ApplicationUser : IdentityUser<Guid>
     public decimal? PricePerHour { get; set; }
 
     public List<string> IBANs { get; set; } = [];
+
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }
