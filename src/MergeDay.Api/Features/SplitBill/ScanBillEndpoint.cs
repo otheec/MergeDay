@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using MergeDay.Api.Endpoints;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,11 +8,11 @@ public static class ScanBillEndpoint
 {
     private static readonly string[] AllowedContentTypes =
     [
-        "image/png", "image/jpeg", "image/jpg", "image/gif", "image/bmp", "image/tiff", "image/webp", "application/pdf"
+        "image/png","image/jpeg","image/jpg","image/gif","image/bmp","image/tiff","image/webp"
+        // Add "application/pdf" only if you rasterize PDFs before OCR.
     ];
     private const long MaxFileSizeBytes = 20 * 1024 * 1024;
 
-    // Response keeps existing shape (returns OCR text in ImageBase64 field)
     public record ScanBillResponse(string ImageBase64);
 
     [EndpointGroup("Bills")]
@@ -35,85 +34,19 @@ public static class ScanBillEndpoint
         }
     }
 
-    // NOTE: Do NOT decorate IFormFile with [FromForm] – this is what breaks Swashbuckle.
     public static async Task<ScanBillResponse> Handler(IFormFile file, CancellationToken ct)
     {
-        // Defaults (since we are not taking extra form fields)
-        const string lang = "eng";
-        const int psm = 3;
-
-        // Basic validations
         if (file is null || file.Length == 0)
             throw new BadHttpRequestException("No file uploaded.");
-
         if (file.Length > MaxFileSizeBytes)
             throw new BadHttpRequestException($"File too large. Max {MaxFileSizeBytes / (1024 * 1024)}MB.");
-
-        var contentType = file.ContentType?.ToLowerInvariant() ?? "";
+        var contentType = (file.ContentType ?? "").ToLowerInvariant();
         if (!AllowedContentTypes.Contains(contentType))
-            throw new BadHttpRequestException($"Unsupported content type: {file.ContentType}. Allowed: {string.Join(", ", AllowedContentTypes)}");
+            throw new BadHttpRequestException($"Unsupported content type: {file.ContentType}.");
 
-        // Persist to a temp file
-        var ext = ContentTypeToExtension(contentType);
         var tempDir = Path.Combine(Path.GetTempPath(), "mergeday-ocr");
         Directory.CreateDirectory(tempDir);
-        var inputPath = Path.Combine(tempDir, $"{Guid.NewGuid():N}{ext}");
-
-        try
-        {
-            await using (var fs = File.Create(inputPath))
-            {
-                await file.OpenReadStream().CopyToAsync(fs, ct);
-            }
-
-            // Run tesseract CLI to stdout
-            var psi = new ProcessStartInfo
-            {
-                FileName = "tesseract",
-                Arguments = $"\"{inputPath}\" stdout -l {lang} --psm {psm}",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using var proc = new Process { StartInfo = psi, EnableRaisingEvents = true };
-
-            try
-            {
-                if (!proc.Start())
-                    throw new InvalidOperationException("Failed to start tesseract process.");
-
-                var readStdOut = proc.StandardOutput.ReadToEndAsync(ct);
-                var readStdErr = proc.StandardError.ReadToEndAsync(ct);
-
-#if NET8_0_OR_GREATER
-                await proc.WaitForExitAsync(ct);
-#else
-                proc.WaitForExit();
-#endif
-                var text = (await readStdOut) ?? string.Empty;
-                var err = await readStdErr;
-
-                if (proc.ExitCode != 0)
-                    throw new InvalidOperationException($"Tesseract exited with code {proc.ExitCode}. Error: {err}");
-
-                return new ScanBillResponse(text.Trim());
-            }
-            catch (System.ComponentModel.Win32Exception ex)
-            {
-                // tesseract not installed or not on PATH
-                throw new InvalidOperationException("Tesseract is not installed or not found on PATH.", ex);
-            }
-        }
-        finally
-        {
-            try { if (File.Exists(inputPath)) File.Delete(inputPath); } catch { /* ignore */ }
-        }
-    }
-
-    private static string ContentTypeToExtension(string contentType) =>
-        contentType switch
+        var ext = contentType switch
         {
             "image/png" => ".png",
             "image/jpeg" or "image/jpg" => ".jpg",
@@ -121,7 +54,95 @@ public static class ScanBillEndpoint
             "image/bmp" => ".bmp",
             "image/tiff" => ".tif",
             "image/webp" => ".webp",
-            "application/pdf" => ".pdf",
             _ => ".bin"
         };
+        var inputPath = Path.Combine(tempDir, $"{Guid.NewGuid():N}{ext}");
+
+        try
+        {
+            await using (var fs = File.Create(inputPath))
+                await file.CopyToAsync(fs, ct);
+
+            var exe = ResolveTesseractExe();
+            var args = BuildTesseractArgs(inputPath);
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = exe,
+                Arguments = args,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using var proc = new Process { StartInfo = psi };
+            if (!proc.Start())
+                throw new InvalidOperationException("Failed to start tesseract process.");
+
+            var stdoutTask = proc.StandardOutput.ReadToEndAsync(ct);
+            var stderrTask = proc.StandardError.ReadToEndAsync(ct);
+
+#if NET8_0_OR_GREATER
+            await proc.WaitForExitAsync(ct);
+#else
+            proc.WaitForExit();
+#endif
+            var stdout = await stdoutTask;
+            var stderr = await stderrTask;
+
+            if (proc.ExitCode != 0)
+                throw new InvalidOperationException($"Tesseract exited with {proc.ExitCode}: {stderr}");
+
+            // Here stdout is plain text because OCR_FORMAT defaults to "text".
+            // If you set OCR_FORMAT=tsv, you'll get TSV and should parse accordingly.
+            return new ScanBillResponse(stdout.Trim());
+        }
+        finally
+        {
+            try { if (File.Exists(inputPath)) File.Delete(inputPath); } catch { /* ignore */ }
+        }
+    }
+
+    private static string ResolveTesseractExe()
+    {
+        var fromEnv = Environment.GetEnvironmentVariable("TESSERACT_EXE");
+        if (!string.IsNullOrWhiteSpace(fromEnv) && File.Exists(fromEnv)) return fromEnv;
+
+        if (OperatingSystem.IsWindows())
+        {
+            var candidates = new[]
+            {
+                @"C:\Program Files\Tesseract-OCR\tesseract.exe",
+                @"C:\Program Files (x86)\Tesseract-OCR\tesseract.exe"
+            };
+            foreach (var c in candidates) if (File.Exists(c)) return c;
+            return "tesseract";
+        }
+
+        // Linux/macOS rely on PATH after apt/brew install
+        return "tesseract";
+    }
+
+    private static string BuildTesseractArgs(string inputPath)
+    {
+        // Read behavior from env vars with sensible defaults
+        var lang = EnvOr("OCR_LANG", "eng+ces");   // languages
+        var psm = EnvOr("OCR_PSM", "6");          // single uniform block
+        var oem = EnvOr("OCR_OEM", "3");          // LSTM by default; use "0" for legacy deterministic
+        var preserveSpaces = EnvOr("OCR_PRESERVE_SPACES", "1") == "1"; // keep spacing
+        var format = EnvOr("OCR_FORMAT", "text");  // "text" or "tsv"
+
+        // Base: input and stdout
+        var args = $"\"{inputPath}\" stdout -l {lang} --psm {psm} --oem {oem}";
+        if (preserveSpaces)
+            args += " -c preserve_interword_spaces=1";
+        if (string.Equals(format, "tsv", StringComparison.OrdinalIgnoreCase))
+            args += " tsv"; // change output format to TSV
+
+        return args;
+    }
+
+    private static string EnvOr(string key, string fallback)
+        => Environment.GetEnvironmentVariable(key) is string v && !string.IsNullOrWhiteSpace(v) ? v : fallback;
 }

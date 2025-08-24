@@ -2,7 +2,6 @@
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 # Build stage
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
@@ -28,22 +27,28 @@ RUN dotnet publish "MergeDay.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 # Final runtime image (with Tesseract installed)
 FROM base AS final
 
-# Install Tesseract and English language data (switch to root temporarily)
+# Install Tesseract + languages (ENG + Czech + OSD)
 USER root
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         tesseract-ocr \
-        tesseract-ocr-ces \ 
         tesseract-ocr-eng \
+        tesseract-ocr-ces \
         tesseract-ocr-osd && \
     rm -rf /var/lib/apt/lists/*
-# Return to the non-root user used by the ASP.NET image
+
+# Default OCR configuration via env vars (your app will read these)
+ENV OCR_LANG=eng+ces \
+    OCR_PSM=6 \
+    OCR_OEM=3 \
+    OCR_PRESERVE_SPACES=1 \
+    OCR_FORMAT=text \
+    ASPNETCORE_URLS=http://0.0.0.0:8080
+
+# Drop back to non-root user in ASP.NET image
 USER app
 
 WORKDIR /app
 COPY --from=publish /app/publish .
-
-# Optional: explicitly bind to 8080 inside container
-ENV ASPNETCORE_URLS=http://0.0.0.0:8080
 
 ENTRYPOINT ["dotnet", "MergeDay.Api.dll"]
