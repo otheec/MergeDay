@@ -77,7 +77,8 @@ public static class LoginEndpoint
         {
             new(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
             new(JwtRegisteredClaimNames.Email, user.Email!),
-            new(ClaimTypes.NameIdentifier, user.Id.ToString())
+            new(JwtRegisteredClaimNames.Name, user.Name),
+            new(JwtRegisteredClaimNames.FamilyName, user.Lastname)
         };
 
         var roles = await userManager.GetRolesAsync(user);

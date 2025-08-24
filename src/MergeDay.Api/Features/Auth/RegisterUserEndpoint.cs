@@ -8,8 +8,8 @@ namespace MergeDay.Api.Features.Auth;
 
 public static class RegisterUserEndpoint
 {
-    public record RegisterUserRequest(string Email, string Password, string Name);
-    public record RegisterUserResponse(string Email, string Role, string Name);
+    public record RegisterUserRequest(string Email, string Password, string Name, string Lastname);
+    public record RegisterUserResponse(string Email, string Role, string Name, string Lastname);
 
     [EndpointGroup("Auth")]
     public sealed class Endpoint : IEndpoint
@@ -38,7 +38,8 @@ public static class RegisterUserEndpoint
         {
             UserName = request.Email,
             Email = request.Email,
-            Name = request.Name
+            Name = request.Name,
+            Lastname = request.Lastname
         };
 
         var result = await userManager.CreateAsync(user, request.Password);
@@ -49,6 +50,6 @@ public static class RegisterUserEndpoint
         var roleToAssign = UserRole.User.ToString();
         await userManager.AddToRoleAsync(user, roleToAssign);
 
-        return Results.Ok(new RegisterUserResponse(user.Email!, roleToAssign, user.Name));
+        return Results.Ok(new RegisterUserResponse(user.Email!, roleToAssign, user.Name, user.Lastname));
     }
 }
