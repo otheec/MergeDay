@@ -2,17 +2,17 @@
 
 #nullable disable
 
-namespace MergeDayApi.Migrations
+namespace MergeDay.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class AddWorkspaceName : Migration
+    public partial class AddUserName : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
                 name: "Name",
-                table: "Workspaces",
+                table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
@@ -23,7 +23,7 @@ namespace MergeDayApi.Migrations
         {
             migrationBuilder.DropColumn(
                 name: "Name",
-                table: "Workspaces");
+                table: "AspNetUsers");
         }
     }
 }

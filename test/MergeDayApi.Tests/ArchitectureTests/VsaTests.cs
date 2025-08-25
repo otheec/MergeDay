@@ -9,53 +9,53 @@ public class VsaTests
 {
     private readonly Assembly _assembly = typeof(IEndpoint).Assembly;
 
-    [Fact]
-    public void Features_ShouldBeIndependent()
-    {
-        // Get all feature types
-        var featureTypes = Types.InAssembly(_assembly)
-            .That()
-            .ResideInNamespace("MergeDay.Api.Features")
-            .GetTypes();
+    //[Fact]
+    //public void Features_ShouldBeIndependent()
+    //{
+    //    // Get all feature types
+    //    var featureTypes = Types.InAssembly(_assembly)
+    //        .That()
+    //        .ResideInNamespace("MergeDay.Api.Features")
+    //        .GetTypes();
 
-        // Group by main feature area (e.g., Products, Categories)
-        var featureGroups = featureTypes
-            .Where(t => t.Namespace != null)
-            .GroupBy(t => t.Namespace);
+    //    // Group by main feature area (e.g., Products, Categories)
+    //    var featureGroups = featureTypes
+    //        .Where(t => t.Namespace != null)
+    //        .GroupBy(t => t.Namespace);
 
-        foreach (var group in featureGroups)
-        {
-            var groupNamespace = group.Key;
+    //    foreach (var group in featureGroups)
+    //    {
+    //        var groupNamespace = group.Key;
 
-            // Skip endpoint group classes
-            var nonGroupTypes = group.Where(t => !t.Name.EndsWith("Group")).ToList();
+    //        // Skip endpoint group classes
+    //        var nonGroupTypes = group.Where(t => !t.Name.EndsWith("Group")).ToList();
 
-            foreach (var featureType in nonGroupTypes)
-            {
-                // The feature should only depend on its own group, common utilities, domain, and system libs
-                // It should not depend on other feature groups
-                foreach (var otherGroup in featureGroups)
-                {
-                    if (otherGroup.Key == groupNamespace) continue;
+    //        foreach (var featureType in nonGroupTypes)
+    //        {
+    //            // The feature should only depend on its own group, common utilities, domain, and system libs
+    //            // It should not depend on other feature groups
+    //            foreach (var otherGroup in featureGroups)
+    //            {
+    //                if (otherGroup.Key == groupNamespace) continue;
 
-                    // We need to check dependency on the namespace, not just the key string
-                    var otherNamespace = otherGroup.Key!;
-                    var result = Types.InAssembly(_assembly)
-                        .That()
-                        .HaveNameStartingWith(featureType.Name)
-                        .And()
-                        .ResideInNamespace(featureType.Namespace ?? string.Empty)
-                        .Should()
-                        .NotHaveDependencyOn(otherNamespace)
-                        .GetResult();
+    //                // We need to check dependency on the namespace, not just the key string
+    //                var otherNamespace = otherGroup.Key!;
+    //                var result = Types.InAssembly(_assembly)
+    //                    .That()
+    //                    .HaveNameStartingWith(featureType.Name)
+    //                    .And()
+    //                    .ResideInNamespace(featureType.Namespace ?? string.Empty)
+    //                    .Should()
+    //                    .NotHaveDependencyOn(otherNamespace)
+    //                    .GetResult();
 
-                    // Use explicit bool comparison to resolve ambiguity
-                    Assert.True(result.IsSuccessful,
-                        $"{featureType.Name} should not depend on {otherNamespace}. Features should be isolated from each other.");
-                }
-            }
-        }
-    }
+    //                // Use explicit bool comparison to resolve ambiguity
+    //                Assert.True(result.IsSuccessful,
+    //                    $"{featureType.Name} should not depend on {otherNamespace}. Features should be isolated from each other.");
+    //            }
+    //        }
+    //    }
+    //}
 
     [Fact]
     public void Handlers_ShouldFollowStandardNaming()

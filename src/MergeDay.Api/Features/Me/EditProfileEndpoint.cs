@@ -9,6 +9,8 @@ namespace MergeDay.Api.Features.Me;
 public static class EditProfileEndpoint
 {
     public record EditProfileRequest(
+        string Name,
+        string Lastname,
         string? TogglApiToken,
         string? FakturoidSlug,
         string? FakturoidClientId,
@@ -39,6 +41,8 @@ public static class EditProfileEndpoint
         if (user is null)
             return Results.Unauthorized();
 
+        user.Name = request.Name;
+        user.Lastname = request.Lastname;
         user.TogglApiToken = request.TogglApiToken;
         user.FakturoidSlug = request.FakturoidSlug;
         user.FakturoidClientId = request.FakturoidClientId;

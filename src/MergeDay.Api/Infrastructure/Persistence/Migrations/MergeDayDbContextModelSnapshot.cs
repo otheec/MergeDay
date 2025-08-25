@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MergeDayApi.Migrations
+namespace MergeDay.Api.Migrations
 {
     [DbContext(typeof(MergeDayDbContext))]
     partial class MergeDayDbContextModelSnapshot : ModelSnapshot
@@ -91,11 +91,19 @@ namespace MergeDayApi.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Lastname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<bool>("LockoutEnabled")
                         .HasColumnType("bit");
 
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
@@ -147,7 +155,8 @@ namespace MergeDayApi.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
 
                     b.Property<Guid>("ApplicationUserId")
                         .HasColumnType("uniqueidentifier");
@@ -185,25 +194,23 @@ namespace MergeDayApi.Migrations
                     b.ToTable("Bills");
                 });
 
-            modelBuilder.Entity("MergeDay.Api.Domain.Entities.BillItems", b =>
+            modelBuilder.Entity("MergeDay.Api.Domain.Entities.BillItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
 
                     b.Property<Guid>("ApplicationUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("BillId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("BillId1")
+                    b.Property<Guid>("BillId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("PaidAt")
+                    b.Property<DateTime?>("PaidAt")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Price")
@@ -213,9 +220,44 @@ namespace MergeDayApi.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("BillId1");
+                    b.HasIndex("BillId");
 
                     b.ToTable("BillItems");
+                });
+
+            modelBuilder.Entity("MergeDay.Api.Domain.Entities.RefreshToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
+
+                    b.Property<Guid>("ApplicationUserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReplacedByTokenHash")
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("TokenHash")
+                        .IsUnique();
+
+                    b.ToTable("RefreshTokens");
                 });
 
             modelBuilder.Entity("MergeDay.Api.Domain.Entities.TogglProject", b =>
@@ -395,29 +437,40 @@ namespace MergeDayApi.Migrations
                     b.HasOne("MergeDay.Api.Domain.Entities.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("MergeDay.Api.Domain.Entities.BillItems", b =>
+            modelBuilder.Entity("MergeDay.Api.Domain.Entities.BillItem", b =>
                 {
                     b.HasOne("MergeDay.Api.Domain.Entities.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MergeDay.Api.Domain.Entities.Bill", "Bill")
-                        .WithMany("BillItems")
-                        .HasForeignKey("BillId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("Items")
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
 
                     b.Navigation("Bill");
+                });
+
+            modelBuilder.Entity("MergeDay.Api.Domain.Entities.RefreshToken", b =>
+                {
+                    b.HasOne("MergeDay.Api.Domain.Entities.ApplicationUser", "ApplicationUser")
+                        .WithMany("RefreshTokens")
+                        .HasForeignKey("ApplicationUserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ApplicationUser");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<System.Guid>", b =>
@@ -471,9 +524,14 @@ namespace MergeDayApi.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("MergeDay.Api.Domain.Entities.ApplicationUser", b =>
+                {
+                    b.Navigation("RefreshTokens");
+                });
+
             modelBuilder.Entity("MergeDay.Api.Domain.Entities.Bill", b =>
                 {
-                    b.Navigation("BillItems");
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }

@@ -2,23 +2,17 @@
 
 #nullable disable
 
-namespace MergeDayApi.Migrations
+namespace MergeDay.Api.Migrations
 {
     /// <inheritdoc />
-    public partial class Notes : Migration
+    public partial class AddUserLastname : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "AuditorNote",
-                table: "Absences",
-                type: "nvarchar(max)",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "RequestorNote",
-                table: "Absences",
+                name: "Lastname",
+                table: "AspNetUsers",
                 type: "nvarchar(max)",
                 nullable: false,
                 defaultValue: "");
@@ -28,12 +22,8 @@ namespace MergeDayApi.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "AuditorNote",
-                table: "Absences");
-
-            migrationBuilder.DropColumn(
-                name: "RequestorNote",
-                table: "Absences");
+                name: "Lastname",
+                table: "AspNetUsers");
         }
     }
 }

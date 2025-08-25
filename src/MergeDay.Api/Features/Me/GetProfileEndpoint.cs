@@ -9,6 +9,8 @@ namespace MergeDay.Api.Features.Me;
 public static class GetProfileEndpoint
 {
     public record GetProfileResponse(
+        string Name,
+        string Lastname,
         string? TogglApiToken,
         string? FakturoidSlug,
         string? FakturoidClientId,
@@ -40,6 +42,8 @@ public static class GetProfileEndpoint
             return Results.Unauthorized();
 
         return Results.Ok(new GetProfileResponse(
+            user.Name,
+            user.Lastname,
             user.TogglApiToken,
             user.FakturoidSlug,
             user.FakturoidClientId,

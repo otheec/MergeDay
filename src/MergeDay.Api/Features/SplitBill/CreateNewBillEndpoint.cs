@@ -76,7 +76,7 @@ public static class CreateNewBillEndpoint
             OrderDate = req.OrderDate,
             CreatedAt = DateTime.UtcNow,
             IsPaid = false,
-            BillItems = req.Items.Select(i => new BillItems
+            Items = req.Items.Select(i => new BillItem
             {
                 ApplicationUserId = i.ApplicationUserId,
                 Price = i.Price,
@@ -94,7 +94,7 @@ public static class CreateNewBillEndpoint
             bill.OrderDate,
             bill.Note,
             bill.IsPaid,
-            bill.BillItems.Select(i => new BillItemResponse(i.Id, i.ApplicationUserId, i.Price, i.IsPaid))
+            bill.Items.Select(i => new BillItemResponse(i.Id, i.ApplicationUserId, i.Price, i.IsPaid))
         );
 
         return Results.Ok(response);

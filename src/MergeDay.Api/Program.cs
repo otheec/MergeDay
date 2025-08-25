@@ -2,6 +2,7 @@ using System.Security.Claims;
 using System.Text;
 using MergeDay.Api.Domain.Entities;
 using MergeDay.Api.Endpoints;
+using MergeDay.Api.Features.Auth;
 using MergeDay.Api.Features.Fakturoid;
 using MergeDay.Api.Features.Toggl;
 using MergeDay.Api.Infrastructure.Persistence;
@@ -13,18 +14,17 @@ using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddOptions<JwtOptions>()
+    .Bind(builder.Configuration.GetSection("Jwt"));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo { Title = "MergeDay API", Version = "v1" });
-
-    // Use HTTP Bearer, not ApiKey
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Type = SecuritySchemeType.Http,
         Scheme = "bearer",
-        BearerFormat = "JWT",
-        Description = "Paste your JWT. No 'Bearer ' prefix needed."
+        BearerFormat = "JWT"
     });
     c.AddSecurityRequirement(new OpenApiSecurityRequirement
 {
@@ -79,9 +79,9 @@ builder.Services
 
 builder.Services.AddAuthorization();
 builder.Services.AddToggl(
-    builder.Configuration["Toggl:BaseUrl"]
+    builder.Configuration["Toggl:BaseUrl"]!
 );
-builder.Services.AddFakturoid(builder.Configuration["Fakturoid:BaseUrl"]);
+builder.Services.AddFakturoid(builder.Configuration["Fakturoid:BaseUrl"]!);
 
 var app = builder.Build();
 
@@ -97,5 +97,13 @@ app.UseAuthorization();
 
 app.MapEndpoints();
 
+await MigrateDatabase(app);
 
 app.Run();
+
+async Task MigrateDatabase(WebApplication app)
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    using var db = scope.ServiceProvider.GetRequiredService<MergeDayDbContext>();
+    await db.Database.MigrateAsync();
+}

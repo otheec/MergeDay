@@ -5,6 +5,9 @@ namespace MergeDay.Api.Domain.Entities;
 
 public class ApplicationUser : IdentityUser<Guid>
 {
+    public required string Name { get; set; }
+    public required string Lastname { get; set; }
+
     public string? TogglApiToken { get; set; }
 
     public string? FakturoidSlug { get; set; }
@@ -14,5 +17,7 @@ public class ApplicationUser : IdentityUser<Guid>
     [Column(TypeName = "decimal(18,2)")]
     public decimal? PricePerHour { get; set; }
 
-    public ICollection<string> IBANs { get; set; } = [];
+    public List<string> IBANs { get; set; } = [];
+
+    public ICollection<RefreshToken> RefreshTokens { get; set; } = [];
 }

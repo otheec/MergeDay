@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace MergeDayApi.Migrations
+namespace MergeDay.Api.Migrations
 {
     [DbContext(typeof(MergeDayDbContext))]
-    [Migration("20250819170946_PayBillItem")]
-    partial class PayBillItem
+    [Migration("20250823104157_AddUserName")]
+    partial class AddUserName
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -100,6 +100,10 @@ namespace MergeDayApi.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -150,7 +154,8 @@ namespace MergeDayApi.Migrations
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
 
                     b.Property<Guid>("ApplicationUserId")
                         .HasColumnType("uniqueidentifier");
@@ -188,25 +193,23 @@ namespace MergeDayApi.Migrations
                     b.ToTable("Bills");
                 });
 
-            modelBuilder.Entity("MergeDay.Api.Domain.Entities.BillItems", b =>
+            modelBuilder.Entity("MergeDay.Api.Domain.Entities.BillItem", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
+                        .HasColumnType("uniqueidentifier")
+                        .HasDefaultValueSql("NEWSEQUENTIALID()");
 
                     b.Property<Guid>("ApplicationUserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("BillId")
-                        .HasColumnType("int");
-
-                    b.Property<Guid>("BillId1")
+                    b.Property<Guid>("BillId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<bool>("IsPaid")
                         .HasColumnType("bit");
 
-                    b.Property<DateTime>("PaidAt")
+                    b.Property<DateTime?>("PaidAt")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("Price")
@@ -216,7 +219,7 @@ namespace MergeDayApi.Migrations
 
                     b.HasIndex("ApplicationUserId");
 
-                    b.HasIndex("BillId1");
+                    b.HasIndex("BillId");
 
                     b.ToTable("BillItems");
                 });
@@ -398,24 +401,24 @@ namespace MergeDayApi.Migrations
                     b.HasOne("MergeDay.Api.Domain.Entities.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
                 });
 
-            modelBuilder.Entity("MergeDay.Api.Domain.Entities.BillItems", b =>
+            modelBuilder.Entity("MergeDay.Api.Domain.Entities.BillItem", b =>
                 {
                     b.HasOne("MergeDay.Api.Domain.Entities.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("MergeDay.Api.Domain.Entities.Bill", "Bill")
-                        .WithMany("BillItems")
-                        .HasForeignKey("BillId1")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .WithMany("Items")
+                        .HasForeignKey("BillId")
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.Navigation("ApplicationUser");
@@ -476,7 +479,7 @@ namespace MergeDayApi.Migrations
 
             modelBuilder.Entity("MergeDay.Api.Domain.Entities.Bill", b =>
                 {
-                    b.Navigation("BillItems");
+                    b.Navigation("Items");
                 });
 #pragma warning restore 612, 618
         }
