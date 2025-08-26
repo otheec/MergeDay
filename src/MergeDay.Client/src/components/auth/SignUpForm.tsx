@@ -13,14 +13,14 @@ export default function SignUpForm() {
   const registerMutation = useAuthRegister();
 
   const handleSubmit = async (_previousData: unknown, formData: FormData) => {
-    //const firstName = formData.get("fname") as string;
-    //const lastName = formData.get("lname") as string;
+    const name = formData.get("fname") as string
+    const lastname = formData.get("lname") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
 
-    if(!email || !password) return;
+    if(!email || !password || !name || !lastname) return;
 
-    registerMutation.mutate({ email, password })
+    registerMutation.mutate({ email, password, name, lastname })
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

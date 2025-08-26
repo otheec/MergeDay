@@ -4,26 +4,39 @@ import {APIRoutes} from "../../../config/APIRoutes.ts";
 import {httpErrorHandler} from "../../httpErrorHandler.ts";
 import {AxiosError} from "axios";
 import {useAuthContext} from "../../../context/AuthContext.tsx";
+import {useNavigate} from "react-router";
 
-type ResponseBody = string;
+type Response = {
+  token: string;
+  expires: Date | string;
+  refreshToken: string;
+  refreshTokenExpires: Date | string;
+}
 
-type RequestBody = {
+type LoginRequestBody = {
   email: string;
   password: string;
 }
 
+type RegisterRequestBody = LoginRequestBody & {
+  name: string;
+  lastname: string;
+}
+
 export const useAuthLogin = () => {
   const { setIsAuthenticated } = useAuthContext();
+  const navigate = useNavigate();
 
-  return useMutation<ResponseBody, AxiosError, RequestBody>({
+  return useMutation<Response, AxiosError, LoginRequestBody>({
     mutationFn: async (data) => {
       const response = await anonymousInstance
-        .post<ResponseBody>(APIRoutes.auth.login, data);
+        .post<Response>(APIRoutes.auth.login, data);
       return response.data;
     },
-    onSuccess: (token) => {
-      localStorage.setItem("token", token);
+    onSuccess: (response) => {
+      localStorage.setItem("token", response.token);
       setIsAuthenticated(true);
+      navigate("/");
     },
     onError: (error) => httpErrorHandler({
       err: error,
@@ -35,20 +48,22 @@ export const useAuthLogin = () => {
 
 export const useAuthRegister = () => {
   const { setIsAuthenticated } = useAuthContext();
+  const navigate = useNavigate();
 
-  return useMutation<ResponseBody, AxiosError, RequestBody>({
+  return useMutation<Response, AxiosError, RegisterRequestBody>({
     mutationFn: async (data) => {
       const response = await anonymousInstance
-        .post<ResponseBody>(APIRoutes.auth.register, data);
+        .post<Response>(APIRoutes.auth.register, data);
       return response.data;
     },
-    onSuccess: (token) => {
-      localStorage.setItem("token", token);
+    onSuccess: (response) => {
+      localStorage.setItem("token", response.token);
       setIsAuthenticated(true);
+      navigate("/");
     },
     onError: (error) => httpErrorHandler({
       err: error,
-      errorKeys: ["email", "password"],
+      errorKeys: ["email", "password", "name", "lastname"],
       setIsAuthenticated,
     }),
   })
