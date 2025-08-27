@@ -1,6 +1,6 @@
 import {AppContextProvider} from "./context/AppContext.tsx";
 import {ScrollToTop} from "./components/common/ScrollToTop.tsx";
-import {BrowserRouter as Router, Route, Routes} from "react-router";
+import {BrowserRouter as Router, Outlet, Route, Routes} from "react-router";
 import {AuthenticatedRoute} from "./routing/ProtectedRoute.tsx";
 import AppLayout from "./layout/AppLayout.tsx";
 import Home from "./pages/Dashboard/Home.tsx";
@@ -24,10 +24,10 @@ import NotFound from "./pages/OtherPage/NotFound.tsx";
 
 export default function App() {
   return (
-    <AppContextProvider>
-      <Router>
-        <ScrollToTop/>
-        <Routes>
+    <Router>
+      <ScrollToTop/>
+      <Routes>
+        <Route element={<AppContextProvider><Outlet/></AppContextProvider>}>
           {/* Dashboard Layout */}
           <Route element={<AuthenticatedRoute/>}>
             <Route element={<AppLayout/>}>
@@ -64,8 +64,8 @@ export default function App() {
 
           {/* Fallback Route */}
           <Route path="*" element={<NotFound/>}/>
-        </Routes>
-      </Router>
-    </AppContextProvider>
+        </Route>
+      </Routes>
+    </Router>
   );
 }
