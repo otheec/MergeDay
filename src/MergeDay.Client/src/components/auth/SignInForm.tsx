@@ -1,15 +1,13 @@
 import {useActionState, useState} from "react";
-import { Link } from "react-router";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
+import {Link} from "react-router";
+import {EyeCloseIcon, EyeIcon} from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
 import {useAuthLogin} from "../../api/auth/mutations/authMutations.ts";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
 
   const loginMutation = useAuthLogin()
 
@@ -40,6 +38,7 @@ export default function SignInForm() {
             </p>
           </div>
           <div>
+            {/*
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                 <svg
@@ -91,7 +90,7 @@ export default function SignInForm() {
                   Or
                 </span>
               </div>
-            </div>
+            </div>*/}
             <form action={action}>
               <div className="space-y-6">
                 <div>
@@ -123,6 +122,7 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
+                {/*
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
@@ -137,6 +137,7 @@ export default function SignInForm() {
                     Forgot password?
                   </Link>
                 </div>
+                */}
                 <div>
                   <Button disabled={isPending} type="submit" className="w-full" size="sm">
                     Sign in
