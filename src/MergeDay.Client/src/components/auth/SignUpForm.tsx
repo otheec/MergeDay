@@ -1,13 +1,29 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
+import {useActionState, useState} from "react";
+import {Link} from "react-router";
+import {EyeCloseIcon, EyeIcon} from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
+import {useAuthRegister} from "../../api/auth/mutations/authMutations.ts";
 
 export default function SignUpForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+
+  const registerMutation = useAuthRegister();
+
+  const handleSubmit = async (_previousData: unknown, formData: FormData) => {
+    const name = formData.get("fname") as string
+    const lastname = formData.get("lname") as string;
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if(!email || !password || !name || !lastname) return;
+
+    registerMutation.mutate({ email, password, name, lastname })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_data, action, isPending] = useActionState(handleSubmit, undefined);
+
   return (
     <div className="flex flex-col flex-1 w-full overflow-y-auto lg:w-1/2 no-scrollbar">
       <div className="w-full max-w-md mx-auto mb-5 sm:pt-10">
@@ -23,6 +39,7 @@ export default function SignUpForm() {
             </p>
           </div>
           <div>
+            {/*
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                 <svg
@@ -75,12 +92,13 @@ export default function SignUpForm() {
                 </span>
               </div>
             </div>
-            <form>
+            */}
+            <form action={action}>
               <div className="space-y-5">
                 <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                   {/* <!-- First Name --> */}
                   <div className="sm:col-span-1">
-                    <Label>
+                    <Label htmlFor="fname">
                       First Name<span className="text-error-500">*</span>
                     </Label>
                     <Input
@@ -92,7 +110,7 @@ export default function SignUpForm() {
                   </div>
                   {/* <!-- Last Name --> */}
                   <div className="sm:col-span-1">
-                    <Label>
+                    <Label htmlFor="lname">
                       Last Name<span className="text-error-500">*</span>
                     </Label>
                     <Input
@@ -105,7 +123,7 @@ export default function SignUpForm() {
                 </div>
                 {/* <!-- Email --> */}
                 <div>
-                  <Label>
+                  <Label htmlFor="email">
                     Email<span className="text-error-500">*</span>
                   </Label>
                   <Input
@@ -117,11 +135,13 @@ export default function SignUpForm() {
                 </div>
                 {/* <!-- Password --> */}
                 <div>
-                  <Label>
+                  <Label htmlFor="password">
                     Password<span className="text-error-500">*</span>
                   </Label>
                   <div className="relative">
                     <Input
+                      id="password"
+                      name="password"
                       placeholder="Enter your password"
                       type={showPassword ? "text" : "password"}
                     />
@@ -138,6 +158,7 @@ export default function SignUpForm() {
                   </div>
                 </div>
                 {/* <!-- Checkbox --> */}
+                {/*
                 <div className="flex items-center gap-3">
                   <Checkbox
                     className="w-5 h-5"
@@ -155,9 +176,10 @@ export default function SignUpForm() {
                     </span>
                   </p>
                 </div>
+                */}
                 {/* <!-- Button --> */}
                 <div>
-                  <button className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
+                  <button disabled={isPending} type="submit" className="flex items-center justify-center w-full px-4 py-3 text-sm font-medium text-white transition rounded-lg bg-brand-500 shadow-theme-xs hover:bg-brand-600">
                     Sign Up
                   </button>
                 </div>

@@ -1,14 +1,28 @@
-import { useState } from "react";
-import { Link } from "react-router";
-import { EyeCloseIcon, EyeIcon } from "../../icons";
+import {useActionState, useState} from "react";
+import {Link} from "react-router";
+import {EyeCloseIcon, EyeIcon} from "../../icons";
 import Label from "../form/Label";
 import Input from "../form/input/InputField";
-import Checkbox from "../form/input/Checkbox";
 import Button from "../ui/button/Button";
+import {useAuthLogin} from "../../api/auth/mutations/authMutations.ts";
 
 export default function SignInForm() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
+
+  const loginMutation = useAuthLogin()
+
+  const handleSubmit = async (_previousData: unknown, formData: FormData) => {
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    if(!email || !password) return;
+
+    loginMutation.mutate({ email, password })
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_data, action, isPending] = useActionState(handleSubmit, undefined);
+
   return (
     <div className="flex flex-col flex-1">
       <div className="w-full max-w-md pt-10 mx-auto">
@@ -24,6 +38,7 @@ export default function SignInForm() {
             </p>
           </div>
           <div>
+            {/*
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-5">
               <button className="inline-flex items-center justify-center gap-3 py-3 text-sm font-normal text-gray-700 transition-colors bg-gray-100 rounded-lg px-7 hover:bg-gray-200 hover:text-gray-800 dark:bg-white/5 dark:text-white/90 dark:hover:bg-white/10">
                 <svg
@@ -75,21 +90,23 @@ export default function SignInForm() {
                   Or
                 </span>
               </div>
-            </div>
-            <form>
+            </div>*/}
+            <form action={action}>
               <div className="space-y-6">
                 <div>
-                  <Label>
+                  <Label htmlFor="email">
                     Email <span className="text-error-500">*</span>{" "}
                   </Label>
-                  <Input placeholder="info@gmail.com" />
+                  <Input id="email" name="email" placeholder="info@gmail.com" />
                 </div>
                 <div>
-                  <Label>
+                  <Label htmlFor="password">
                     Password <span className="text-error-500">*</span>{" "}
                   </Label>
                   <div className="relative">
                     <Input
+                      id="password"
+                      name="password"
                       type={showPassword ? "text" : "password"}
                       placeholder="Enter your password"
                     />
@@ -105,6 +122,7 @@ export default function SignInForm() {
                     </span>
                   </div>
                 </div>
+                {/*
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <Checkbox checked={isChecked} onChange={setIsChecked} />
@@ -119,8 +137,9 @@ export default function SignInForm() {
                     Forgot password?
                   </Link>
                 </div>
+                */}
                 <div>
-                  <Button className="w-full" size="sm">
+                  <Button disabled={isPending} type="submit" className="w-full" size="sm">
                     Sign in
                   </Button>
                 </div>

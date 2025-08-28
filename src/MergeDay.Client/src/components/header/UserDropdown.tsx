@@ -1,10 +1,21 @@
-import { useState } from "react";
-import { DropdownItem } from "../ui/dropdown/DropdownItem";
-import { Dropdown } from "../ui/dropdown/Dropdown";
-import { Link } from "react-router";
+import {useState} from "react";
+import {DropdownItem} from "../ui/dropdown/DropdownItem";
+import {Dropdown} from "../ui/dropdown/Dropdown";
+import {useNavigate} from "react-router";
+import {useAuthContext} from "../../context/AuthContext.tsx";
+import {APP_ROUTES} from "../../config/AppRoutes.ts";
+import {decodeJwt} from "jose";
+import {DecodedTokenType} from "../../api/auth/types/decoded-token.ts";
+import {isUserPayload} from "../../api/auth/typeguards/isUserPayload.ts";
 
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
+  const { setIsAuthenticated } = useAuthContext();
+  const navigate = useNavigate();
+
+  const rawPayload = decodeJwt(localStorage.getItem("token")!);
+
+  const userInfo: DecodedTokenType | null = isUserPayload(rawPayload) ? rawPayload : null;
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
@@ -13,6 +24,13 @@ export default function UserDropdown() {
   function closeDropdown() {
     setIsOpen(false);
   }
+
+  const handleLogOut = () => {
+    setIsAuthenticated(false);
+    localStorage.removeItem("token");
+    navigate(APP_ROUTES.login);
+  }
+
   return (
     <div className="relative">
       <button
@@ -23,7 +41,7 @@ export default function UserDropdown() {
           <img src="/images/user/owner.jpg" alt="User" />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">Musharof</span>
+        <span className="block mr-1 font-medium text-theme-sm">{userInfo?.name} {userInfo?.family_name}</span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""
@@ -51,10 +69,10 @@ export default function UserDropdown() {
       >
         <div>
           <span className="block font-medium text-gray-700 text-theme-sm dark:text-gray-400">
-            Musharof Chowdhury
+            {userInfo?.name} {userInfo?.family_name}
           </span>
           <span className="mt-0.5 block text-theme-xs text-gray-500 dark:text-gray-400">
-            randomuser@pimjo.com
+            {userInfo?.email}
           </span>
         </div>
 
@@ -135,8 +153,8 @@ export default function UserDropdown() {
             </DropdownItem>
           </li>
         </ul>
-        <Link
-          to="/signin"
+        <button
+          onClick={handleLogOut}
           className="flex items-center gap-3 px-3 py-2 mt-3 font-medium text-gray-700 rounded-lg group text-theme-sm hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-300"
         >
           <svg
@@ -155,7 +173,7 @@ export default function UserDropdown() {
             />
           </svg>
           Sign out
-        </Link>
+        </button>
       </Dropdown>
     </div>
   );
