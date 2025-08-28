@@ -2,20 +2,21 @@ name: mergeday
 
 services:
   sql:
-    image: mcr.microsoft.com/mssql/server:2022-latest
+    image: postgres:15-alpine
     container_name: mergeday-sql
     environment:
-      - ACCEPT_EULA=Y
-      - MSSQL_SA_PASSWORD=Passw0rd_Strong_123!
+      - POSTGRES_PASSWORD=Passw0rd_Strong_123!
+      - POSTGRES_DB=MergeDayDb
+      - POSTGRES_USER=postgres
     ports:
-      - "1433:1433"
+      - "5432:5432"
     volumes:
-      - mssql-data:/var/opt/mssql
+      - pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Passw0rd_Strong_123!", "-C", "-Q", "SELECT 1"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s
       timeout: 5s
-      retries: 10
+      retries: 5
 
   api:
     build:
@@ -27,7 +28,7 @@ services:
     environment:
       - ASPNETCORE_URLS=http://+:8080
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__MergeDayDb=Server=sql;Database=MergeDayDb;User=sa;Password=Passw0rd_Strong_123!;TrustServerCertificate=True;
+      - ConnectionStrings__MergeDayDb=Host=sql;Database=MergeDayDb;Username=postgres;Password=Passw0rd_Strong_123!;
     depends_on:
       sql:
         condition: service_healthy
@@ -38,9 +39,9 @@ services:
       dockerfile: Dockerfile
     container_name: mergeday-client
     ports:
-      - "3000:80"
+      - "5001:80"
     depends_on:
       - api
 
 volumes:
-  mssql-data:
+  pgdata:
