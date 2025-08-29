@@ -86,7 +86,7 @@ builder.Services.AddCors(opt =>
     opt.AddPolicy("CorsPolicy", builder =>
     {
         builder
-            .WithOrigins("http://localhost:3000", "https://localhost:3000")
+            .AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
     });
@@ -97,6 +97,7 @@ builder.Services.AddToggl(
     builder.Configuration["Toggl:BaseUrl"]!
 );
 builder.Services.AddFakturoid(builder.Configuration["Fakturoid:BaseUrl"]!);
+builder.Services.AddHealthChecks();
 
 var app = builder.Build();
 
@@ -105,10 +106,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.MapHealthChecks("/health");
 app.UseCors("CorsPolicy");
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection(); turned off because the container is http only
 app.UseAuthentication();
 app.UseAuthorization();
 
