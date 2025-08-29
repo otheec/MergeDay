@@ -43,7 +43,11 @@ builder.Services.AddAuthorization(options =>
 });
 builder.Services.AddEndpoints(typeof(Program).Assembly);
 builder.Services.AddDbContext<MergeDayDbContext>(opt =>
-    opt.UseSqlServer(builder.Configuration.GetConnectionString("MergeDayDb")));
+    opt.UseNpgsql(
+        builder.Configuration.GetConnectionString("MergeDayDb"),
+        npg => npg.EnableRetryOnFailure()
+    ));
+
 builder.Services
     .AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
     {

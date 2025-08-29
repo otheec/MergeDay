@@ -22,13 +22,6 @@ public class MergeDayDbContext(DbContextOptions<MergeDayDbContext> options)
 
         modelBuilder.Entity<Bill>(e =>
         {
-            e.HasKey(x => x.Id);
-            e.Property(x => x.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
-
-            e.Property(x => x.Name).IsRequired();
-            e.Property(x => x.IBAN).IsRequired();
-            e.Property(x => x.Total).HasColumnType("decimal(18,2)");
-
             e.HasOne(x => x.ApplicationUser)
              .WithMany()
              .HasForeignKey(x => x.ApplicationUserId)
@@ -44,10 +37,6 @@ public class MergeDayDbContext(DbContextOptions<MergeDayDbContext> options)
 
         modelBuilder.Entity<BillItem>(e =>
         {
-            e.HasKey(x => x.Id);
-            e.Property(x => x.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
-            e.Property(x => x.Price).HasColumnType("decimal(18,2)");
-
             e.HasOne(x => x.ApplicationUser)
              .WithMany()
              .HasForeignKey(x => x.ApplicationUserId)
@@ -59,11 +48,6 @@ public class MergeDayDbContext(DbContextOptions<MergeDayDbContext> options)
 
         modelBuilder.Entity<RefreshToken>(e =>
         {
-            e.HasKey(x => x.Id);
-            e.Property(x => x.Id).HasDefaultValueSql("NEWSEQUENTIALID()");
-            e.Property(x => x.TokenHash).IsRequired().HasMaxLength(256);
-            e.Property(x => x.ReplacedByTokenHash).HasMaxLength(256);
-
             e.HasIndex(x => x.TokenHash).IsUnique();
             e.HasIndex(x => x.ApplicationUserId);
 
