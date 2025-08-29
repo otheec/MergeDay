@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MergeDay.Api.Domain.Entities;
 
@@ -9,11 +10,13 @@ public class Bill
     public Guid ApplicationUserId { get; set; }
     public ApplicationUser ApplicationUser { get; set; } = null!;
 
+    [Required]
     public required string Name { get; set; } = string.Empty;
 
     [Column(TypeName = "decimal(18,2)")]
     public required decimal Total { get; set; }
 
+    [Required]
     public required string IBAN { get; set; } = string.Empty;
 
     public string? Note { get; set; }
