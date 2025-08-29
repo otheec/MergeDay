@@ -1,0 +1,67 @@
+name: build-and-push-to-ghcr
+
+on:
+  push:
+    branches: [ main ]
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write     # allow pushing to GHCR
+    env:
+      # Base becomes: ghcr.io/<owner>/<repo> (lowercased)
+      IMAGE_API_NAME: mergeday-api
+      IMAGE_CLIENT_NAME: mergeday-client
+    steps:
+      - uses: actions/checkout@v4
+
+      # lowercased repo path for GHCR (avoids case issues)
+      - name: Set IMAGE_BASE
+        run: echo "IMAGE_BASE=ghcr.io/${GITHUB_REPOSITORY,,}" >> $GITHUB_ENV
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ---- Backend (API) ----
+      - name: Build & push API (multi-arch)
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: src/MergeDay.Api/Dockerfile
+          platforms: linux/amd64,linux/arm64   # ARM64 for Pi, AMD64 for dev
+          push: true
+          tags: |
+            ${{ env.IMAGE_BASE }}/${{ env.IMAGE_API_NAME }}:latest
+            ${{ env.IMAGE_BASE }}/${{ env.IMAGE_API_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # ---- Frontend (Client) ----
+      - name: Build & push Client (multi-arch)
+        uses: docker/build-push-action@v6
+        with:
+          context: src/MergeDay.Client
+          file: src/MergeDay.Client/Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE_BASE }}/${{ env.IMAGE_CLIENT_NAME }}:latest
+            ${{ env.IMAGE_BASE }}/${{ env.IMAGE_CLIENT_NAME }}:${{ github.sha }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
