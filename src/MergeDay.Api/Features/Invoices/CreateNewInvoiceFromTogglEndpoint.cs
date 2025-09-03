@@ -4,22 +4,22 @@ using MergeDay.Api.Features.Fakturoid.Connector.Request;
 using MergeDay.Api.Infrastructure.Persistence;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using static MergeDay.Api.Features.Fakturoid.CreateFakturoidInvoiceEndpoint;
 
 namespace MergeDay.Api.Features.Invoices;
 
 public static class CreateNewInvoiceFromTogglEndpoint
 {
     public record CreateNewInvoiceFromTogglRequest(DateTime From, DateTime to, decimal pricePerHour);
+    public record CreateNewInvoiceFromTogglResponse(int Id, string Number, string HtmlUrl, string PdfUrl);
 
     [EndpointGroup("Invoices")]
     public sealed class Endpoint : IEndpoint
     {
         public void MapEndpoint(IEndpointRouteBuilder app)
         {
-            app.MapStandardPost<CreateNewInvoiceFromTogglRequest, IResult>("/invoices", Handler)
-                .WithName("Create and submit new invoice")
-                .WithSummary("Creates a new invoice in Fakturoid.")
+            app.MapStandardPost<CreateNewInvoiceFromTogglRequest, CreateNewInvoiceFromTogglResponse>("/invoices-from-toggl", Handler)
+                .WithName("Create and submit new invoice from toggle entries")
+                .WithSummary("Creates a new invoice in Fakturoid based on toggle entries.")
                 .RequireAuthorization(AppPolicy.UserOrAdmin);
         }
     }
@@ -68,9 +68,8 @@ public static class CreateNewInvoiceFromTogglEndpoint
             }).ToList(),
         };
 
-        var invoice = await fakturoidService.CreateInvoiceAsync(dto);
+        var createdInvoice = await fakturoidService.CreateInvoiceAsync(dto);
 
-        return Results.Created(invoice.Html_Url,
-            new CreateFakturoidInvoiceResponse(invoice.Id, invoice.Number, invoice.Pdf_Url));
+        return Results.Ok(new CreateNewInvoiceFromTogglResponse(createdInvoice.Id, createdInvoice.Number, createdInvoice.Html_Url, createdInvoice.Pdf_Url));
     }
 }
